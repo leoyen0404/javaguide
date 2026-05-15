@@ -1,26 +1,27 @@
 # Project Notes
 
-## General Guidelines
-- Ensure adherence to Java SE 11 standards and best practices throughout the guide.
-- Provide clear explanations and concise code examples to facilitate understanding.
-- Strive for completeness and accuracy in covering all relevant topics for the OCP SE 11 exam.
-- Incorporate feedback from peers, mentors, and potential readers to enhance the quality of the guide.
+## Content principles
 
-## Content Development
-- Research and outline the structure of the guide in Weeks 1-2.
-- Write content for each section, including explanations, code snippets, examples, and practice questions in Weeks 3-6.
-- Review and revise the content for clarity, accuracy, and completeness in Weeks 7-8.
-- Finalize the markdown file, add appendices, and supplementary material in Weeks 9-10.
-- Conduct testing and validation of practice questions and mock exams in Weeks 11-12.
+- Target Java SE 11 unless a newer feature is explicitly labeled.
+- Prefer examples that compile as written or need only obvious surrounding imports/classes.
+- Explain trade-offs, not just syntax.
+- Distinguish language features, standard-library APIs, and engineering practices.
+- Keep certification material practical and connected to real programming tasks.
 
-## Resources Utilization
-- Refer to Java SE 11 documentation and official resources for detailed information.
-- Explore Java programming books, tutorials, and online courses for in-depth insights.
-- Utilize OCP SE 11 exam preparation materials and sample questions for assessment.
-- Engage with online forums and communities for clarifying doubts and seeking feedback.
-- Seek peer feedback and review to enhance the quality of the guide.
+## Style guide
 
-## Continuous Improvement
-- Iteratively improve the guide based on feedback and updates in Java SE 11.
-- Stay updated on industry trends and advancements in Java programming.
-- Encourage active participation and collaboration within the Java community.
+- Use sentence-case headings.
+- Use fenced code blocks with language labels.
+- Keep examples short and focused.
+- Avoid placeholder text such as "add details later".
+- Use tables for comparisons and checklists for review steps.
+
+## Maintenance checklist
+
+Before publishing a content update:
+
+1. Verify internal links.
+2. Run a Markdown lint or equivalent structural check when available.
+3. Compile any non-trivial Java snippets that were added.
+4. Confirm the text does not imply post-Java-11 syntax is part of Java 11.
+5. Update the main index if a chapter is added, removed, or renamed.

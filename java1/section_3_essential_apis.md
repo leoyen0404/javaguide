@@ -1,107 +1,119 @@
 # Essential APIs
 
 ## Overview
-Essential APIs in Java SE 11 provide developers with a rich set of tools and libraries to build robust and efficient applications. Understanding and utilizing these APIs is crucial for mastering Java development.
 
-## APIs Covered
-1. java.lang Package
-2. java.util Package
-3. java.io Package
-4. java.nio Package
-5. java.net Package
-6. java.time Package
-7. java.util.concurrent Package
-8. java.util.stream Package
-9. java.lang.reflect Package
-10. java.security Package
+The Java standard library is large, but everyday Java development depends on a core set of APIs: `Object`, `String`, wrappers, `Optional`, date/time, regex, streams, math, and utility classes. Mastering these APIs prevents unnecessary dependencies and reduces bugs.
 
-## Detailed Explanations
+## `Object`, equality, and hashing
 
-### java.lang Package
-The java.lang package provides fundamental classes that are automatically imported into every Java program. It includes classes like Object, String, Integer, Double, and more.
+Every class extends `Object`. If instances need logical equality, override `equals` and `hashCode` together.
 
 ```java
-String message = "Hello, Java!";
-int number = Integer.parseInt("42");
-```
+final class UserId {
+    private final String value;
 
-### java.util Package
-The java.util package contains utility classes and data structures essential for everyday programming tasks. It includes classes like ArrayList, HashMap, LinkedList, and Collections.
+    UserId(String value) {
+        this.value = Objects.requireNonNull(value);
+    }
 
-```java
-List<String> names = new ArrayList<>();
-names.add("Alice");
-names.add("Bob");
-```
+    @Override public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof UserId)) return false;
+        UserId that = (UserId) other;
+        return value.equals(that.value);
+    }
 
-### java.io Package
-The java.io package provides classes for input and output operations, including reading from and writing to files. It includes classes like FileInputStream, FileOutputStream, BufferedReader, and BufferedWriter.
-
-```java
-try (BufferedReader reader = new BufferedReader(new FileReader("input.txt"))) {
-    String line = reader.readLine();
-    System.out.println(line);
-} catch (IOException e) {
-    e.printStackTrace();
+    @Override public int hashCode() {
+        return value.hashCode();
+    }
 }
 ```
 
-### java.nio Package
-The java.nio package offers support for non-blocking I/O operations and buffer management. It includes classes like ByteBuffer, Channel, Selector, and Path.
+## Strings and text
+
+`String` is immutable. Use `StringBuilder` for repeated mutation in loops.
 
 ```java
-Path filePath = Paths.get("data.txt");
-ByteBuffer buffer = ByteBuffer.allocate(1024);
+String normalized = " Java ".strip().toLowerCase(Locale.ROOT);
+String joined = String.join(", ", "red", "green", "blue");
 ```
 
-### java.net Package
-The java.net package provides classes for networking operations, such as creating network connections and handling URLs. It includes classes like URL, HttpURLConnection, and Socket.
+Use `Locale.ROOT` for machine-oriented case conversion, not the default user locale.
+
+## Wrappers, boxing, and numbers
+
+Primitive wrappers such as `Integer` and `Long` are objects. Autoboxing is convenient but can hide allocations and null risks.
 
 ```java
-URL url = new URL("https://www.example.com");
-HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+Integer maybe = null;
+// int value = maybe; // NullPointerException from unboxing
 ```
 
-### java.time Package
-The java.time package introduces new date and time classes that offer improved functionality over the legacy java.util.Date and java.util.Calendar classes. It includes classes like LocalDate, LocalTime, LocalDateTime, and ZonedDateTime.
+For exact decimal arithmetic, use `BigDecimal` created from strings or integer cents.
+
+## `Optional`
+
+`Optional<T>` represents a possibly missing return value. It is usually a return type, not a field or parameter type.
 
 ```java
-LocalDate today = LocalDate.now();
-LocalTime now = LocalTime.now();
+Optional<String> email = findEmail(userId);
+String label = email.map(String::toLowerCase).orElse("unknown");
 ```
 
-### java.util.concurrent Package
-The java.util.concurrent package provides classes for concurrent programming, including thread management, synchronization, and executor services. It includes classes like Executor, ThreadPoolExecutor, and Future.
+Avoid calling `get()` without checking presence.
+
+## Date and time
+
+Use `java.time`, not legacy `Date` and `Calendar`, for new code.
 
 ```java
-ExecutorService executor = Executors.newFixedThreadPool(4);
-executor.submit(() -> System.out.println("Task executed"));
-executor.shutdown();
+LocalDate dueDate = LocalDate.now().plusDays(30);
+Instant timestamp = Instant.now();
+ZonedDateTime meeting = ZonedDateTime.of(2026, 5, 14, 9, 0, 0, 0, ZoneId.of("UTC"));
 ```
 
-### java.util.stream Package
-The java.util.stream package introduces the Stream API for functional-style operations on collections. It enables developers to perform operations like filtering, mapping, and reducing elements in a collection.
+Choose the right type:
+
+- `Instant` for machine timestamps.
+- `LocalDate` for date-only business concepts.
+- `LocalDateTime` for date/time without a zone.
+- `ZonedDateTime` for real-world scheduled events.
+- `Duration` for time-based amounts and `Period` for date-based amounts.
+
+## Regular expressions
+
+Use `Pattern` when matching repeatedly.
 
 ```java
-List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
-int sum = numbers.stream().filter(n -> n % 2 == 0).mapToInt(n -> n).sum();
+Pattern emailLike = Pattern.compile("^[^@]+@[^@]+\\.[^@]+$");
+boolean ok = emailLike.matcher("dev@example.com").matches();
 ```
 
-### java.lang.reflect Package
-The java.lang.reflect package provides classes and interfaces for advanced reflection capabilities, allowing developers to inspect and manipulate classes, methods, and fields at runtime. It includes classes like Class, Method, Field, and Constructor.
+Validate with domain-specific rules when correctness matters; regex alone rarely proves real-world validity.
+
+## Streams
+
+Streams process sequences declaratively. They are best for transformations, filtering, grouping, and aggregation.
 
 ```java
-Class<?> clazz = MyClass.class;
-Method[] methods = clazz.getDeclaredMethods();
+Map<String, Long> counts = List.of("java", "jvm", "java").stream()
+        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 ```
 
-### java.security Package
-The java.security package offers classes and interfaces for implementing security features in Java applications. It includes classes like MessageDigest, KeyPairGenerator, SecureRandom, and Signature.
+Do not mutate shared state from a stream pipeline, especially in parallel streams.
 
-```java
-MessageDigest digest = MessageDigest.getInstance("SHA-256");
-byte[] hash = digest.digest("Hello, Java!".getBytes());
-```
+## Utility classes
 
-Explore these essential APIs to enhance your Java programming skills and build powerful applications.
+Useful APIs include:
 
+- `Objects` for null checks and equality helpers.
+- `Arrays` for array sorting, searching, and conversion.
+- `Collections` for collection algorithms and wrappers.
+- `Comparator` for composable ordering.
+- `Base64` for encoding binary data as text.
+
+## Exercises
+
+1. Implement a value object with correct `equals`, `hashCode`, and `toString`.
+2. Parse and format an ISO-8601 date using `java.time`.
+3. Use streams to group orders by customer and sum totals.

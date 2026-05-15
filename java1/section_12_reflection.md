@@ -1,65 +1,51 @@
 # Reflection
 
 ## Overview
-Reflection in Java is a powerful feature that allows programs to inspect and manipulate classes, methods, fields, and other components of a Java program at runtime. It provides a way to obtain information about the structure of classes and their members, as well as to invoke methods dynamically.
 
-## Core Concepts
-1. Class Reflection
-2. Method Reflection
-3. Field Reflection
-4. Constructor Reflection
-5. Dynamic Invocation
+Reflection lets code inspect and sometimes modify classes, fields, constructors, methods, annotations, and generic metadata at runtime. It is powerful but should be used carefully because it weakens compile-time guarantees.
 
-## Detailed Explanations
-
-### Class Reflection
-The `Class` class in Java represents classes and interfaces at runtime. It provides methods to examine the runtime properties of a class, such as its name, superclass, implemented interfaces, constructors, methods, and fields.
+## Inspecting classes
 
 ```java
-Class<?> clazz = MyClass.class;
-String className = clazz.getName();
-Class<?> superClass = clazz.getSuperclass();
-Constructor<?>[] constructors = clazz.getConstructors();
-Method[] methods = clazz.getMethods();
-Field[] fields = clazz.getDeclaredFields();
+Class<?> type = String.class;
+System.out.println(type.getName());
+for (Method method : type.getDeclaredMethods()) {
+    System.out.println(method.getName());
+}
 ```
 
-### Method Reflection
-Method reflection allows you to inspect and invoke methods dynamically. You can obtain information about a method's name, return type, parameter types, modifiers, and annotations.
+## Creating instances and invoking methods
 
 ```java
-Method method = clazz.getMethod("methodName", parameterTypes);
-Object result = method.invoke(instance, arguments);
+Constructor<Person> ctor = Person.class.getConstructor(String.class);
+Person person = ctor.newInstance("Ada");
+Method greet = Person.class.getMethod("greet");
+String message = (String) greet.invoke(person);
 ```
 
-### Field Reflection
-Field reflection enables you to access and modify fields of a class dynamically. You can retrieve information about a field's name, type, modifiers, and annotations.
+Reflective calls wrap target exceptions in `InvocationTargetException`; inspect the cause to understand the real failure.
 
-```java
-Field field = clazz.getDeclaredField("fieldName");
-field.setAccessible(true);
-Object value = field.get(instance);
-field.set(instance, newValue);
-```
+## Access and modules
 
-### Constructor Reflection
-Constructor reflection allows you to create new instances of a class dynamically by invoking constructors. You can obtain information about a constructor's parameter types, modifiers, and annotations.
+Reflection respects access checks unless access is suppressed. In modular applications, strong encapsulation can also block reflective access unless packages are opened.
 
-```java
-Constructor<?> constructor = clazz.getConstructor(parameterTypes);
-Object newInstance = constructor.newInstance(arguments);
-```
+## Use cases
 
-### Dynamic Invocation
-Reflection enables dynamic invocation of methods and constructors, allowing you to call methods and create objects based on runtime information.
+Reflection is appropriate for:
 
-```java
-Method method = clazz.getMethod("methodName", parameterTypes);
-Object result = method.invoke(instance, arguments);
+- Frameworks that instantiate application classes.
+- Test utilities and serialization libraries.
+- Annotation-driven discovery.
+- Tools that inspect code structure.
 
-Constructor<?> constructor = clazz.getConstructor(parameterTypes);
-Object newInstance = constructor.newInstance(arguments);
-```
+Avoid reflection for ordinary application flow when interfaces, factories, or dependency injection are clearer.
 
-Reflection should be used judiciously due to its potential performance overhead and complexity. It is commonly employed in frameworks, libraries, and tools that require runtime introspection and manipulation of Java classes.
+## Performance and safety
 
+Reflective calls are harder for tools and humans to trace. Cache metadata, validate assumptions early, and keep reflective code isolated behind small APIs.
+
+## Exercises
+
+1. Write a utility that prints public method names of a class.
+2. Instantiate a class by constructor name and handle all checked exceptions.
+3. Explain how reflection interacts with private fields and module boundaries.

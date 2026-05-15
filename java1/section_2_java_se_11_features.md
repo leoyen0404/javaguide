@@ -1,106 +1,113 @@
 # Java SE 11 Features
 
-## Overview
-Java SE 11 introduced several new features and enhancements to the Java platform, providing developers with improved tools and capabilities for building robust and efficient applications.
+## Why Java 11 matters
 
-## Features Covered
-1. Local-Variable Syntax for Lambda Parameters
-2. HTTP Client API
-3. Nest-Based Access Control
-4. Dynamic Class-File Constants
-5. Epsilon Garbage Collector
-6. Flight Recorder
-7. Z Garbage Collector
-8. Unicode 10 Support
-9. TLS 1.3 Support
-10. Single-File Source-Code Launch
+Java 11 is a long-term-support release that consolidated platform changes introduced in Java 9, 10, and 11. To use Java 11 well, you should know the module system, `var` for local variables, new standard APIs, HTTP client support, and launch/runtime changes.
 
-## Detailed Explanations
+## Module system
 
-### Local-Variable Syntax for Lambda Parameters
-Java SE 11 allows the use of var in lambda expressions to declare local variables with inferred types.
+The Java Platform Module System lets applications explicitly declare dependencies and exported packages.
 
 ```java
-(var x, var y) -> x + y
+module com.example.app {
+    requires java.net.http;
+    exports com.example.app.api;
+}
 ```
 
-### HTTP Client API
-The new HTTP Client API provides a modern and flexible way to make HTTP requests and handle responses.
+Use modules when you need strong encapsulation, reliable dependency boundaries, or smaller custom runtimes. Classpath-based applications remain valid and common.
+
+## Local-variable type inference
+
+`var` can be used for local variables when the initializer makes the type obvious.
+
+```java
+var names = new ArrayList<String>();
+names.add("Ada");
+```
+
+Good uses:
+
+- Long generic types where the right side is clear.
+- Loop variables in stream or collection processing.
+
+Avoid `var` when it hides important domain meaning or produces surprising inferred types.
+
+## Standard HTTP client
+
+Java 11 standardizes an asynchronous and synchronous HTTP client in `java.net.http`.
 
 ```java
 HttpClient client = HttpClient.newHttpClient();
-HttpRequest request = HttpRequest.newBuilder()
-    .uri(URI.create("https://www.example.com"))
-    .GET()
-    .build();
+HttpRequest request = HttpRequest.newBuilder(URI.create("https://example.com"))
+        .GET()
+        .build();
 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.statusCode());
 ```
 
-### Nest-Based Access Control
-Nest-based access control simplifies access to private members of nested classes and interfaces.
+Use timeouts, handle interruptions correctly, and avoid hard-coding external endpoints in tests.
+
+## String and collection conveniences
+
+Java 11 adds helpful `String` methods:
 
 ```java
-class Outer {
-    private int outerVar;
+System.out.println("  ".isBlank());
+System.out.println("Java\nGuide".lines().count());
+System.out.println(" hi ".strip());
+System.out.println("ha".repeat(3));
+```
 
-    class Inner {
-        private int innerVar;
+Java 9 added collection factory methods that are commonly used in Java 11 code:
 
-        void accessOuter() {
-            outerVar = 10;
-        }
-    }
+```java
+List<String> roles = List.of("admin", "reader");
+Map<String, Integer> scores = Map.of("alice", 10, "bob", 8);
+```
+
+The returned collections are unmodifiable and reject `null` elements.
+
+## Optional, streams, and predicates
+
+Java 9-11 added conveniences such as `Optional.isEmpty`, stream factories, and predicate negation.
+
+```java
+Optional<String> value = Optional.empty();
+if (value.isEmpty()) {
+    System.out.println("missing");
 }
+
+Stream.ofNullable(null).forEach(System.out::println);
+List<String> nonBlank = List.of("a", " ", "b").stream()
+        .filter(Predicate.not(String::isBlank))
+        .collect(Collectors.toList());
 ```
 
-### Dynamic Class-File Constants
-Dynamic class-file constants allow the loading of constants at runtime, improving performance and flexibility.
+## Single-file source-code launch
 
-```java
-class Constants {
-    static final int MAX_SIZE = 100;
-    static final int DYNAMIC_SIZE = Integer.getInteger("dynamic.size");
-}
+Java 11 can run a single source file directly, useful for demos and scripts.
+
+```bash
+java Hello.java
 ```
 
-### Epsilon Garbage Collector
-The Epsilon GC is a no-op garbage collector that handles memory allocation without performing any actual garbage collection.
+This is not a replacement for builds in production projects, but it is convenient for learning.
 
-```java
-java -XX:+UseEpsilonGC MyApp
-```
+## Removed and deprecated technologies
 
-### Flight Recorder
-Flight Recorder provides low-overhead profiling and diagnostics for Java applications, capturing detailed runtime information.
+Java 11 removed Java EE and CORBA modules from the JDK. Applications that used JAXB, JAX-WS, or CORBA from the JDK need external dependencies.
 
-```java
-java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder MyApp
-```
+## Practical checklist
 
-### Z Garbage Collector
-The Z GC is a scalable garbage collector designed for low-latency and high-throughput applications.
+- Use `var` only when readability improves.
+- Prefer `List.of`, `Set.of`, and `Map.of` for small immutable constants.
+- Use the standard HTTP client for simple HTTP integrations.
+- Understand whether your project runs on the classpath or module path.
+- Do not use post-Java-11 syntax in Java 11-targeted source.
 
-```java
-java -XX:+UseZGC MyApp
-```
+## Exercises
 
-### Unicode 10 Support
-Java SE 11 adds support for Unicode 10.0.0, including new characters and scripts.
-
-### TLS 1.3 Support
-Transport Layer Security (TLS) 1.3 is supported in Java SE 11, offering improved security and performance for network communication.
-
-### Single-File Source-Code Launch
-Java SE 11 allows the execution of a single Java source file directly without the need for compilation.
-
-```java
-java HelloWorld.java
-```
-
-## Practice Questions
-1. How does the HTTP Client API improve handling of HTTP requests in Java SE 11?
-2. Explain the concept of nest-based access control and its benefits.
-3. What is the purpose of the Epsilon Garbage Collector in Java SE 11?
-
-## Mock Exam Question
-...(about 12 lines omitted)...
+1. Convert a small classpath program into a module with `module-info.java`.
+2. Rewrite verbose local declarations using `var`, then revert any that reduce clarity.
+3. Write a Java 11 HTTP request with a timeout and a clear error-handling path.

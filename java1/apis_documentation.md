@@ -1,51 +1,47 @@
 # APIs Documentation
 
-## Overview
-APIs play a crucial role in Java development, providing developers with a wide range of tools and functionalities to create robust applications. Understanding and effectively utilizing these APIs is essential for mastering Java SE 11.
+This page is a map of Java SE 11 APIs used throughout the guide.
 
-## APIs Covered
-1. java.lang Package
-2. java.util Package
-3. java.io Package
-4. java.nio Package
-5. java.net Package
-6. java.time Package
-7. java.util.concurrent Package
-8. java.util.stream Package
-9. java.lang.reflect Package
-10. java.security Package
+## `java.lang`
 
-## Detailed Explanations
+Automatically imported. Includes `Object`, `String`, primitive wrappers, `Math`, `System`, `Thread`, and core exceptions.
 
-### java.lang Package
-The java.lang package contains fundamental classes that are automatically imported into every Java program. It includes classes like Object, String, Integer, Double, and more.
+## `java.util`
 
-```java
-String message = "Hello, Java!";
-int number = Integer.parseInt("42");
-```
+Includes collections, `Optional`, `Objects`, `Comparator`, `Random`, `Scanner`, `Properties`, and utility algorithms.
 
-### java.util Package
-The java.util package provides utility classes and data structures essential for everyday programming tasks. It includes classes like ArrayList, HashMap, LinkedList, and Collections.
+## `java.util.stream`
 
-```java
-List<String> names = new ArrayList<>();
-names.add("Alice");
-names.add("Bob");
-```
+Supports declarative sequence processing with `Stream`, primitive streams, and `Collectors`.
 
-### java.io Package
-The java.io package offers classes for input and output operations, enabling file reading and writing functionalities. It includes classes like FileInputStream, FileOutputStream, BufferedReader, and BufferedWriter.
+## `java.time`
 
-```java
-try (BufferedReader reader = new BufferedReader(new FileReader("input.txt"))) {
-    String line = reader.readLine();
-    System.out.println(line);
-    // Additional file reading and writing operations
-} catch (IOException e) {
-    System.err.println("Error reading file: " + e.getMessage());
-}
-```
+Modern date/time API. Prefer it over `Date` and `Calendar` for new code.
 
-For more detailed information on specific APIs and their functionalities, refer to the official Java SE 11 documentation and API specifications.
+## `java.io`
 
+Classic streams, readers, writers, serialization, and file abstractions. Still useful, especially for interoperability.
+
+## `java.nio.file`
+
+Modern file-system API with `Path`, `Files`, file walking, file attributes, and watch services.
+
+## `java.net` and `java.net.http`
+
+Networking primitives and Java 11's standard HTTP client.
+
+## `java.sql`
+
+JDBC interfaces for relational database access: `Connection`, `PreparedStatement`, `ResultSet`, `SQLException`, and transaction controls.
+
+## `java.util.concurrent`
+
+Executors, futures, locks, semaphores, blocking queues, concurrent collections, and atomic classes.
+
+## `java.lang.reflect`
+
+Runtime inspection and invocation of classes, constructors, methods, fields, and annotations.
+
+## `java.security` and `javax.crypto`
+
+Security primitives, permissions, message digests, signatures, secure random values, keys, ciphers, and related cryptographic APIs.

@@ -1,115 +1,81 @@
 # Generics
 
 ## Overview
-Generics in Java provide a way to create classes, interfaces, and methods that operate on objects of various types while providing compile-time type safety. Understanding generics is essential for writing flexible and reusable code in Java SE 11.
 
-## Topics Covered
-1. Introduction to Generics
-2. Generic Classes and Interfaces
-3. Generic Methods
-4. Wildcards in Generics
-5. Bounded Type Parameters
-6. Generic Constraints and Type Inference
-7. Erasure and Type Safety
-8. Generic Collections
+Generics let classes and methods operate on types while preserving compile-time type safety. They remove many casts and make APIs more expressive.
 
-## Detailed Explanations
-
-### Introduction to Generics
-Generics allow classes and methods to operate on objects of any type, providing type safety at compile time.
+## Generic classes
 
 ```java
-public class Box<T> {
-    private T value;
+final class Box<T> {
+    private final T value;
 
-    public void setValue(T value) {
+    Box(T value) {
         this.value = value;
     }
 
-    public T getValue() {
+    T value() {
         return value;
     }
 }
 ```
 
-### Generic Classes and Interfaces
-Generic classes and interfaces can be parameterized with one or more type parameters to create reusable components.
+`T` is a type parameter. Common names include `T` for type, `E` for element, `K` for key, and `V` for value.
+
+## Generic methods
 
 ```java
-public interface List<T> {
-    void add(T element);
-    T get(int index);
+static <T> T first(List<T> items) {
+    if (items.isEmpty()) throw new IllegalArgumentException("empty list");
+    return items.get(0);
 }
 ```
 
-### Generic Methods
-Generic methods allow type parameters to be declared and used within a method, enabling flexibility in method signatures.
+The type parameter is declared before the return type.
+
+## Bounds
+
+Bounds restrict type parameters to types with required capabilities.
 
 ```java
-public <T> T findMax(T[] array) {
-    T max = array[0];
-    for (T element : array) {
-        if (element.compareTo(max) > 0) {
-            max = element;
-        }
-    }
-    return max;
+static <T extends Comparable<? super T>> T max(List<T> values) {
+    return values.stream().max(Comparator.naturalOrder()).orElseThrow();
 }
 ```
 
-### Wildcards in Generics
-Wildcards enable flexibility in working with unknown types in generic classes and methods.
+## Wildcards and PECS
+
+PECS means **Producer Extends, Consumer Super**.
 
 ```java
-public void printList(List<?> list) {
-    for (Object element : list) {
-        System.out.println(element);
-    }
+static double total(Collection<? extends Number> numbers) {
+    double sum = 0;
+    for (Number number : numbers) sum += number.doubleValue();
+    return sum;
+}
+
+static void addDefaults(Collection<? super Integer> target) {
+    target.add(1);
+    target.add(2);
 }
 ```
 
-### Bounded Type Parameters
-Bounded type parameters restrict the types that can be used as arguments in generics, providing additional compile-time checks.
+Use `? extends T` when reading produced values as `T`. Use `? super T` when writing `T` values into a consumer.
 
-```java
-public <T extends Comparable<T>> T findMax(T[] array) {
-    T max = array[0];
-    for (T element : array) {
-        if (element.compareTo(max) > 0) {
-            max = element;
-        }
-    }
-    return max;
-}
-```
+## Type erasure
 
-### Generic Constraints and Type Inference
-Constraints and type inference help ensure type safety and enable the compiler to infer types in generic contexts.
+Generics are mostly compile-time. At runtime, many generic type details are erased. Consequences include:
 
-```java
-List<String> stringList = new ArrayList<>();
-stringList.add("Java");
-String firstElement = stringList.get(0);
-```
+- You cannot create `new T()` directly.
+- You cannot create generic arrays like `new List<String>[10]` safely.
+- Overloads cannot differ only by generic type arguments after erasure.
 
-### Erasure and Type Safety
-Java uses type erasure to implement generics, ensuring backward compatibility while maintaining type safety at runtime.
+## Raw types
 
-```java
-List<Integer> intList = new ArrayList<>();
-intList.add(10);
-int value = intList.get(0);
-```
+Raw types disable generic checks and should be avoided except when interoperating with legacy APIs.
 
-### Generic Collections
-Java provides generic collections such as List, Set, and Map to store and manipulate elements of specific types in a type-safe manner.
+## Exercises
 
-```java
-List<String> names = new ArrayList<>();
-names.add("Alice");
-names.add("Bob");
-String first = names.get(0);
-```
-
-Mastering generics is crucial for writing flexible and type-safe Java code. Practice using generics in various scenarios to enhance your Java programming skills.
-
+1. Create a generic `Repository<ID, T>` interface.
+2. Write a method that copies elements from `List<? extends T>` to `List<? super T>`.
+3. Explain why `List<String>` is not a subtype of `List<Object>`.

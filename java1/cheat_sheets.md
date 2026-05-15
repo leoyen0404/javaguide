@@ -1,147 +1,120 @@
-# Cheat Sheets
+# Java SE 11 Cheat Sheets
 
-## Core Java Concepts Cheat Sheet
-- **Classes and Objects**: 
-  - Classes are blueprints for objects.
-  - Objects are instances of classes.
-- **Inheritance**:
-  - Allows a class to inherit properties and behavior from another class.
-- **Polymorphism**:
-  - Refers to the ability of objects to take on multiple forms.
-- **Abstraction**:
-  - Hides complex implementation details behind a simple interface.
-- **Encapsulation**:
-  - Bundles data and methods that operate on the data into a single unit.
+## Compilation and execution
 
-## Java SE 11 Features Cheat Sheet
-- **Local-Variable Syntax for Lambda Parameters**:
-  - Allows var to be used for lambda parameters.
-- **HTTP Client API**:
-  - Provides a modern HTTP client for making requests.
-- **Nest-Based Access Control**:
-  - Enhances encapsulation by allowing classes to be nested.
-- **Dynamic Class-File Constants**:
-  - Introduces a new constant-pool form to represent nominal descriptors.
+```bash
+javac Example.java
+java Example
+java Example.java          # single-file source launch in Java 11
+javap -c Example           # inspect bytecode
+```
 
-## Essential APIs Cheat Sheet
-- **java.lang Package**:
-  - Provides fundamental classes like Object and String.
-- **java.util Package**:
-  - Contains utility classes like ArrayList and HashMap.
-- **java.io Package**:
-  - Supports input and output operations.
-- **java.nio Package**:
-  - Offers support for non-blocking I/O operations.
+## Common syntax
 
-## Concurrency Cheat Sheet
-- **Threads**:
-  - Basic units of execution in Java.
-- **Synchronization**:
-  - Ensures only one thread accesses shared resources at a time.
-- **Thread Pools**:
-  - Manage a pool of worker threads for efficient task execution.
+```java
+class Example {
+    private final String name;
 
-## Exception Handling Cheat Sheet
-- **try-catch**:
-  - Used to handle exceptions in Java.
-- **throws**:
-  - Declares that a method may throw certain exceptions.
-- **finally**:
-  - Executes code regardless of whether an exception is thrown.
+    Example(String name) {
+        this.name = Objects.requireNonNull(name);
+    }
 
-## I/O Operations Cheat Sheet
-- **File Handling**:
-  - Reading and writing data to files.
-- **Streams**:
-  - Transfer data between a program and an I/O device.
-- **Serialization**:
-  - Converts objects into a byte stream for storage or transmission.
+    String name() {
+        return name;
+    }
+}
+```
 
-## Collections Framework Cheat Sheet
-- **List**:
-  - Ordered collection that allows duplicate elements.
-- **Set**:
-  - Collection that does not allow duplicate elements.
-- **Map**:
-  - Key-value pair collection.
+## Collections quick choice
 
-## Generics Cheat Sheet
-- **Generic Classes**:
-  - Classes that can work with any data type.
-- **Generic Methods**:
-  - Methods that can operate on different types.
-- **Wildcards**:
-  - Represent an unknown type in generics.
+| Need | Use |
+| --- | --- |
+| Ordered duplicates | `ArrayList` |
+| Unique elements | `HashSet` |
+| Unique elements in insertion order | `LinkedHashSet` |
+| Sorted elements | `TreeSet` |
+| Key-value lookup | `HashMap` |
+| Predictable map order | `LinkedHashMap` |
+| Queue/deque | `ArrayDeque` |
+| Concurrent map | `ConcurrentHashMap` |
 
-## Lambdas Cheat Sheet
-- **Lambda Expressions**:
-  - Concise way to represent anonymous functions.
-- **Functional Interfaces**:
-  - Interfaces with a single abstract method.
-- **Method References**:
-  - Refers to methods or constructors without invoking them.
+## Generics
 
-## JDBC Cheat Sheet
-- **JDBC Drivers**:
-  - Software components enabling Java applications to interact with databases.
-- **Connection Establishment**:
-  - Establishing a connection to a database.
-- **Statement Execution**:
-  - Executing SQL queries and updates.
+```java
+class Box<T> { }
+<T> T identity(T value) { return value; }
+void read(Collection<? extends Number> source) { }
+void write(Collection<? super Integer> target) { }
+```
 
-## Annotations Cheat Sheet
-- **Built-In Annotations**:
-  - Annotations provided by Java for various purposes.
-- **Custom Annotations**:
-  - Annotations defined by users for specific requirements.
-- **Annotation Processors**:
-  - Tools that process annotations at compile time.
+Remember PECS: producer extends, consumer super.
 
-## Reflection Cheat Sheet
-- **Class Reflection**:
-  - Inspecting and modifying classes at runtime.
-- **Method Reflection**:
-  - Accessing and invoking methods dynamically.
-- **Field Reflection**:
-  - Reading and updating fields of a class.
+## Lambdas and streams
 
-## JVM Internals Cheat Sheet
-- **Class Loading**:
-  - Loading classes into memory dynamically.
-- **Memory Management**:
-  - Allocating and freeing memory for Java objects.
-- **Garbage Collection**:
-  - Identifying and reclaiming unused memory.
+```java
+Predicate<String> nonBlank = s -> !s.isBlank();
+Function<String, Integer> length = String::length;
 
-## Unit Testing with JUnit Cheat Sheet
-- **Test Cases**:
-  - Methods annotated with @Test to verify code behavior.
-- **Assertions**:
-  - Checking expected results using assert methods.
-- **Annotations**:
-  - @Before, @After, @BeforeEach, @AfterEach for setup and teardown.
+List<String> names = items.stream()
+        .filter(nonBlank)
+        .map(String::trim)
+        .sorted()
+        .collect(Collectors.toList());
+```
 
-## Security Cheat Sheet
-- **Secure Coding Practices**:
-  - Writing code that is resistant to vulnerabilities.
-- **Encryption**:
-  - Protecting data by converting it into a secure format.
-- **Authentication**:
-  - Verifying the identity of users or systems.
+## Date/time selection
 
-## Design Patterns Cheat Sheet
-- **Creational Patterns**:
-  - Patterns for object creation.
-- **Structural Patterns**:
-  - Patterns for object composition.
-- **Behavioral Patterns**:
-  - Patterns for object interaction.
+| Concept | Type |
+| --- | --- |
+| Machine timestamp | `Instant` |
+| Date without time | `LocalDate` |
+| Time without date | `LocalTime` |
+| Local date and time | `LocalDateTime` |
+| Zoned real-world event | `ZonedDateTime` |
+| Time amount | `Duration` |
+| Date amount | `Period` |
 
-## Best Practices Cheat Sheet
-- **Naming Conventions**:
-  - Guidelines for naming variables, methods, and classes.
-- **Code Formatting**:
-  - Consistent indentation and spacing for readability.
-- **Error Handling**:
-  - Properly managing exceptions and errors.
+## Exception patterns
 
+```java
+try (BufferedReader reader = Files.newBufferedReader(path)) {
+    return reader.readLine();
+} catch (IOException e) {
+    throw new UncheckedIOException("Could not read " + path, e);
+}
+```
+
+## JDBC essentials
+
+```java
+try (PreparedStatement ps = connection.prepareStatement(
+        "select id from users where email = ?")) {
+    ps.setString(1, email);
+    try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            System.out.println(rs.getLong("id"));
+        }
+    }
+}
+```
+
+## Concurrency essentials
+
+```java
+ExecutorService executor = Executors.newFixedThreadPool(4);
+try {
+    Future<String> future = executor.submit(() -> "done");
+    System.out.println(future.get());
+} finally {
+    executor.shutdown();
+}
+```
+
+## Secure coding reminders
+
+- Validate untrusted input.
+- Use `PreparedStatement` for SQL parameters.
+- Never log secrets.
+- Avoid Java deserialization for untrusted data.
+- Normalize paths before file access.
+- Use `SecureRandom` for security-sensitive randomness.

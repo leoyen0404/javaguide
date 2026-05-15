@@ -1,80 +1,111 @@
 # Real-World Examples
 
-## Example 1: Building a Banking Application
-In this example, we will demonstrate how to create a simple banking application using Java SE 11. The application will allow users to perform basic banking operations such as deposit, withdrawal, and balance inquiry.
+These examples show how chapters combine in small applications. They are intentionally framework-light so the Java SE concepts remain visible.
+
+## Example 1: Command-line expense tracker
+
+### Requirements
+
+- Add expenses with category, amount, and date.
+- Save records to a UTF-8 CSV file.
+- Summarize totals by category.
+- Reject invalid amounts and malformed dates.
+
+### Concepts used
+
+- Core Java classes and validation.
+- `java.time.LocalDate` for dates.
+- `Path` and `Files` for storage.
+- Collections and streams for grouping.
+- Exceptions for input and I/O failures.
+
+### Sketch
 
 ```java
-public class BankAccount {
-    private String accountNumber;
-    private double balance;
+final class Expense {
+    private final LocalDate date;
+    private final String category;
+    private final long cents;
 
-    public BankAccount(String accountNumber, double initialBalance) {
-        this.accountNumber = accountNumber;
-        this.balance = initialBalance;
+    Expense(LocalDate date, String category, long cents) {
+        if (cents <= 0) throw new IllegalArgumentException("amount must be positive");
+        this.date = Objects.requireNonNull(date);
+        this.category = Objects.requireNonNull(category);
+        this.cents = cents;
     }
 
-    public void deposit(double amount) {
-        balance += amount;
-    }
-
-    public void withdraw(double amount) {
-        if (balance >= amount) {
-            balance -= amount;
-        } else {
-            System.out.println("Insufficient funds");
-        }
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-}
-
-public class BankingApplication {
-    public static void main(String[] args) {
-        BankAccount account = new BankAccount("123456789", 1000.0);
-        account.deposit(500.0);
-        account.withdraw(200.0);
-        System.out.println("Current Balance: " + account.getBalance());
+    String toCsv() {
+        return date + "," + category + "," + cents;
     }
 }
 ```
 
-## Example 2: Implementing a Chat Application
-In this example, we will showcase how to build a simple chat application using Java SE 11. The application will allow multiple users to exchange messages in real-time using sockets for communication.
+### Extension tasks
+
+1. Add unit tests for parsing and validation.
+2. Support importing existing CSV data.
+3. Add a monthly summary command.
+
+## Example 2: Concurrent log analyzer
+
+### Requirements
+
+- Read many log files.
+- Count errors by error code.
+- Process files concurrently.
+- Produce deterministic output.
+
+### Concepts used
+
+- `ExecutorService` for parallel file work.
+- `ConcurrentHashMap` or result merging for aggregation.
+- `Files.lines` for streaming large files.
+- Clear exception handling for unreadable files.
+
+### Design note
+
+Prefer returning per-file maps and merging them in one thread unless profiling proves concurrent mutation is needed. Simpler designs are easier to test.
+
+## Example 3: JDBC-backed user repository
+
+### Requirements
+
+- Create users.
+- Find users by ID or email.
+- Update status in a transaction.
+- Avoid SQL injection.
+
+### Concepts used
+
+- JDBC prepared statements.
+- Domain objects and repositories.
+- Transactions and rollback.
+- Unit tests with fake repositories and integration tests with a test database.
+
+### Repository contract
 
 ```java
-// Server side
-public class ChatServer {
-    public static void main(String[] args) {
-        // Server implementation
-    }
-}
-
-// Client side
-public class ChatClient {
-    public static void main(String[] args) {
-        // Client implementation
-    }
+interface UserRepository {
+    Optional<User> findById(long id) throws RepositoryException;
+    long create(User user) throws RepositoryException;
 }
 ```
 
-## Example 3: Developing a Task Scheduler
-In this example, we will illustrate how to create a task scheduler application in Java SE 11. The application will enable users to schedule and execute tasks at specified intervals using Java's concurrency utilities.
+## Example 4: Annotation-driven command runner
 
-```java
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+### Requirements
 
-public class TaskScheduler {
-    public static void main(String[] args) {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(() -> {
-            // Task implementation
-        }, 0, 1, TimeUnit.MINUTES);
-    }
-}
-```
+- Mark command methods with an annotation.
+- Discover commands at startup.
+- Invoke matching commands by name.
 
-These real-world examples demonstrate practical applications of Java SE 11 concepts in building diverse types of applications. By understanding and implementing such examples, developers can enhance their Java programming skills and proficiency.
+### Concepts used
+
+- Custom annotations.
+- Reflection.
+- Exception handling.
+- Security limits for reflective invocation.
+
+### Warning
+
+Keep reflection behind a small, tested boundary. Normal application logic should call typed methods directly.

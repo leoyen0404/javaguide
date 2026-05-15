@@ -1,64 +1,66 @@
 # JDBC
 
 ## Overview
-Java Database Connectivity (JDBC) is a standard Java API for connecting and interacting with relational databases. Understanding JDBC is essential for developing database-driven applications in Java.
 
-## Core Concepts
-1. JDBC Drivers
-2. Connection Establishment
-3. Statement Execution
-4. ResultSet Handling
-5. Transaction Management
+JDBC is Java's standard API for relational database access. It provides connections, statements, prepared statements, result sets, transactions, and metadata.
 
-## Detailed Explanations
+## Connections
 
-### JDBC Drivers
-JDBC drivers facilitate communication between Java applications and databases. There are four types of JDBC drivers: Type 1 (JDBC-ODBC bridge), Type 2 (Native API), Type 3 (Network Protocol), and Type 4 (Thin Driver).
+Use a connection pool in real applications. The raw `DriverManager` style is useful for small examples.
 
 ```java
-Class.forName("com.mysql.cj.jdbc.Driver");
-Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "username", "password");
-```
-
-### Connection Establishment
-Establishing a connection to a database involves specifying the database URL, username, and password. The Connection interface represents a connection session with the database.
-
-```java
-Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "username", "password");
-```
-
-### Statement Execution
-Executing SQL statements in JDBC involves creating Statement or PreparedStatement objects. Statements can be used to execute queries, updates, and other SQL commands.
-
-```java
-Statement statement = connection.createStatement();
-ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
-```
-
-### ResultSet Handling
-A ResultSet object represents the result set of a SQL query. Developers can iterate over the ResultSet to retrieve data from the database.
-
-```java
-while (resultSet.next()) {
-    String name = resultSet.getString("name");
-    int age = resultSet.getInt("age");
-    System.out.println("Name: " + name + ", Age: " + age);
+try (Connection connection = DriverManager.getConnection(url, user, password)) {
+    System.out.println(connection.getMetaData().getDatabaseProductName());
 }
 ```
 
-### Transaction Management
-JDBC supports transaction management for ensuring data consistency in database operations. Transactions can be committed or rolled back based on the outcome of database operations.
+## Prepared statements
+
+Prepared statements prevent SQL injection and let the database reuse execution plans.
+
+```java
+String sql = "select id, email from users where id = ?";
+try (PreparedStatement statement = connection.prepareStatement(sql)) {
+    statement.setLong(1, userId);
+    try (ResultSet rs = statement.executeQuery()) {
+        if (rs.next()) {
+            return new User(rs.getLong("id"), rs.getString("email"));
+        }
+        return null;
+    }
+}
+```
+
+Never concatenate untrusted input into SQL.
+
+## Transactions
 
 ```java
 connection.setAutoCommit(false);
-// Perform database operations
-connection.commit();
+try {
+    debit(connection, from, amount);
+    credit(connection, to, amount);
+    connection.commit();
+} catch (SQLException e) {
+    connection.rollback();
+    throw e;
+} finally {
+    connection.setAutoCommit(true);
+}
 ```
 
-### Best Practices
-- Use PreparedStatement to prevent SQL injection attacks.
-- Close resources (Connection, Statement, ResultSet) in a finally block.
-- Handle exceptions gracefully and log errors for debugging.
+Keep transactions short and define isolation requirements intentionally.
 
-Start leveraging JDBC to interact with databases effectively in your Java applications.
+## Result mapping
 
+Map database rows to domain objects at the boundary. Keep SQL column names explicit instead of relying on `select *`.
+
+## Resource management
+
+`Connection`, `Statement`, and `ResultSet` must be closed. Try-with-resources is the standard approach.
+
+## Exercises
+
+1. Implement a repository method using `PreparedStatement`.
+2. Add transaction handling around two related updates.
+3. Explain how connection pooling changes application architecture.

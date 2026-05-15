@@ -1,74 +1,72 @@
-# Lambdas
+# Lambdas and Streams
 
 ## Overview
-Lambdas are a powerful feature introduced in Java SE 8 that allows you to treat functionality as a method argument, essentially creating anonymous functions. Understanding lambdas is crucial for writing concise and expressive code in Java SE 11.
 
-## Topics Covered
-1. Lambda Expressions
-2. Functional Interfaces
-3. Syntax and Examples
-4. Method References
-5. Variable Capture and Effectively Final
-6. Type Inference
-7. Functional Interfaces in Java SE 11
+Lambdas let you pass behavior as data when a target type is a functional interface. Streams use lambdas to describe data transformations and aggregation.
 
-## Detailed Explanations
+## Functional interfaces
 
-### Lambda Expressions
-Lambda expressions provide a concise way to represent anonymous functions. They consist of parameters, an arrow (->), and a body.
-
-```java
-// Syntax: (parameters) -> expression or {statements;}
-Runnable task = () -> System.out.println("Hello, Lambda!");
-```
-
-### Functional Interfaces
-Functional interfaces are interfaces with a single abstract method. Lambdas can be used to implement these interfaces concisely.
+A functional interface has exactly one abstract method.
 
 ```java
 @FunctionalInterface
-interface Calculator {
-    int operate(int a, int b);
+interface Rule<T> {
+    boolean test(T value);
 }
 ```
 
-### Syntax and Examples
-Lambdas can be used in place of functional interfaces to simplify code and improve readability.
+Common standard interfaces include `Predicate<T>`, `Function<T, R>`, `Consumer<T>`, `Supplier<T>`, `UnaryOperator<T>`, and `BiFunction<T, U, R>`.
+
+## Lambda syntax
 
 ```java
-Calculator add = (a, b) -> a + b;
-int result = add.operate(10, 5);
+Predicate<String> nonBlank = text -> !text.isBlank();
+Comparator<String> byLength = (a, b) -> Integer.compare(a.length(), b.length());
 ```
 
-### Method References
-Method references provide a way to refer to methods without invoking them. They can be used as shorthand for lambda expressions.
+A lambda can capture local variables only if they are final or effectively final.
+
+## Method references
 
 ```java
-List<String> names = Arrays.asList("Alice", "Bob", "Charlie");
+List<String> names = List.of("Ada", "Grace");
 names.forEach(System.out::println);
 ```
 
-### Variable Capture and Effectively Final
-Lambdas can capture variables from their enclosing scope. However, these variables must be effectively final, meaning they are not reassigned.
+Method references are clearer when they directly name the intended behavior. Use a lambda when argument transformation makes the method reference hard to read.
+
+## Stream pipeline anatomy
+
+A stream pipeline has a source, zero or more intermediate operations, and one terminal operation.
 
 ```java
-int multiplier = 2;
-Calculator multiply = (a, b) -> a * b * multiplier;
+List<String> result = names.stream()
+        .filter(name -> name.length() > 3)
+        .map(String::toUpperCase)
+        .sorted()
+        .collect(Collectors.toList());
 ```
 
-### Type Inference
-Java can infer the types of parameters in lambda expressions based on the context in which they are used, reducing the need for explicit type declarations.
+Intermediate operations are lazy; work begins only when a terminal operation runs.
+
+## Collectors
 
 ```java
-Comparator<String> lengthComparator = (s1, s2) -> s1.length() - s2.length();
+Map<Integer, List<String>> byLength = names.stream()
+        .collect(Collectors.groupingBy(String::length));
 ```
 
-### Functional Interfaces in Java SE 11
-Java SE 11 introduced new functional interfaces in the java.util.function package, providing a standardized set of functional interfaces for common use cases.
+Use collectors for grouping, partitioning, joining, reducing, and mapping results.
 
-```java
-Predicate<String> isLong = s -> s.length() > 5;
-boolean result = isLong.test("JavaLambda");
-```
+## Pitfalls
 
-Start leveraging the power of lambdas in your Java development today!
+- Reusing a stream after a terminal operation causes `IllegalStateException`.
+- Side effects in stream operations make behavior harder to reason about.
+- Parallel streams require independent, stateless operations to be safe.
+- `Optional` from stream operations should be handled explicitly.
+
+## Exercises
+
+1. Convert a loop that filters and maps values into a stream pipeline.
+2. Group transactions by account and sum amounts.
+3. Rewrite a complex method reference as a readable lambda and compare clarity.

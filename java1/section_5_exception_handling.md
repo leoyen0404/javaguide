@@ -1,66 +1,73 @@
-# Section 5: Exception Handling
+# Exception Handling
 
-Exception handling is a crucial aspect of Java programming to manage errors and unexpected situations effectively.
+## Overview
 
-## Understanding Exceptions
+Exceptions model failures that prevent normal progress. Good exception handling makes failures visible, preserves diagnostic context, and lets callers choose a recovery strategy.
 
-In Java, exceptions are objects that represent errors or exceptional conditions during the program's execution. They can be checked exceptions (compile-time exceptions) or unchecked exceptions (runtime exceptions).
+## Exception hierarchy
 
-### Checked Exceptions
+- `Throwable` is the root type.
+- `Error` usually represents serious JVM or environment failures; application code rarely catches it.
+- `Exception` covers recoverable or application-level failures.
+- Checked exceptions must be caught or declared.
+- Runtime exceptions usually indicate programming errors, invalid arguments, or violated state.
 
-Checked exceptions are exceptions that must be either caught or declared in the method signature using the `throws` keyword. Examples of checked exceptions include `IOException`, `SQLException`, and `ClassNotFoundException`.
+```java
+void load(Path path) throws IOException {
+    Files.readString(path);
+}
+```
+
+## Choosing exception types
+
+Use standard exceptions when they communicate the problem clearly:
+
+- `IllegalArgumentException` for invalid method arguments.
+- `IllegalStateException` for invalid object state.
+- `NullPointerException` rarely thrown manually; prefer `Objects.requireNonNull` for required parameters.
+- `IOException` for file, network, or stream failures.
+- Domain exceptions for business failures callers may handle.
+
+## Try-with-resources
+
+Use try-with-resources for objects that implement `AutoCloseable`.
+
+```java
+try (BufferedReader reader = Files.newBufferedReader(Path.of("input.txt"))) {
+    return reader.readLine();
+}
+```
+
+Resources close in reverse declaration order. Suppressed exceptions are attached to the primary exception.
+
+## Wrapping and preserving causes
+
+When translating exceptions between layers, keep the original cause.
 
 ```java
 try {
-    // Code that may throw a checked exception
-} catch (IOException e) {
-    // Handle the IOException
+    repository.save(order);
+} catch (SQLException e) {
+    throw new OrderPersistenceException("Could not save order " + order.id(), e);
 }
 ```
 
-### Unchecked Exceptions
+Do not swallow exceptions silently. If a failure is intentionally ignored, document why.
 
-Unchecked exceptions are exceptions that do not need to be caught or declared. They typically extend `RuntimeException` or `Error`. Examples of unchecked exceptions include `NullPointerException`, `ArrayIndexOutOfBoundsException`, and `ArithmeticException`.
+## Logging and rethrowing
 
-```java
-try {
-    // Code that may throw an unchecked exception
-} catch (NullPointerException e) {
-    // Handle the NullPointerException
-}
-```
+Log where the exception is handled, not at every layer. Logging and rethrowing repeatedly creates noisy duplicate stack traces.
 
-## Handling Exceptions
+## Best practices
 
-Java provides the `try-catch-finally` block for handling exceptions. The `try` block contains the code that may throw an exception, the `catch` block handles the exception, and the `finally` block executes cleanup code regardless of whether an exception occurs.
+- Fail fast at boundaries with clear messages.
+- Keep catch blocks specific.
+- Never use exceptions for normal loop control.
+- Avoid broad `catch (Exception e)` unless at process boundaries.
+- Do not return `null` to signal errors when an exception or `Optional` is clearer.
 
-```java
-try {
-    // Code that may throw an exception
-} catch (Exception e) {
-    // Handle the exception
-} finally {
-    // Cleanup code
-}
-```
+## Exercises
 
-## Custom Exceptions
-
-You can create custom exception classes by extending `Exception` or its subclasses. Custom exceptions allow you to define specific error conditions for your application.
-
-```java
-public class CustomException extends Exception {
-    public CustomException(String message) {
-        super(message);
-    }
-}
-```
-
-## Best Practices
-
-- Catch specific exceptions rather than using a generic `Exception` catch block.
-- Always handle exceptions at an appropriate level in your application.
-- Use logging frameworks like Log4j or SLF4J to log exceptions for debugging and monitoring.
-
-Exception handling is essential for writing robust and reliable Java applications. Understanding how to handle exceptions effectively can improve the overall quality of your code.
-
+1. Convert manual stream closing code to try-with-resources.
+2. Design a checked exception and an unchecked exception for a payment module; explain the choice.
+3. Refactor a broad catch block into specific recovery paths.

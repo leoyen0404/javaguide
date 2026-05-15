@@ -1,66 +1,65 @@
 # Collections Framework
 
 ## Overview
-In this section, we will explore the Collections Framework in Java, which provides a set of interfaces and classes for working with collections of objects.
 
-## Topics Covered
-1. Introduction to Collections
-2. Collection Interface
-3. List Interface
-4. Set Interface
-5. Map Interface
+Collections store groups of objects. Choosing the right collection affects correctness, performance, ordering, duplicates, and thread-safety.
 
-## Detailed Explanations
+## Core interfaces
 
-### Introduction to Collections
-The Collections Framework in Java provides a unified architecture for manipulating and storing groups of objects. It includes interfaces such as Collection, List, Set, and Map, along with their respective implementations.
+| Interface | Purpose | Common implementations |
+| --- | --- | --- |
+| `List` | Ordered sequence, duplicates allowed | `ArrayList`, `LinkedList` |
+| `Set` | Unique elements | `HashSet`, `LinkedHashSet`, `TreeSet` |
+| `Queue` | Processing order | `ArrayDeque`, `PriorityQueue` |
+| `Map` | Key-value lookup | `HashMap`, `LinkedHashMap`, `TreeMap` |
 
-```java
-List<String> myList = new ArrayList<>();
-myList.add("Apple");
-myList.add("Banana");
-```
+## Choosing collections
 
-### Collection Interface
-The Collection interface is the root interface in the Collections Framework hierarchy. It defines common methods for working with collections, such as adding, removing, and iterating over elements.
+- Use `ArrayList` as the default list.
+- Use `HashSet` for uniqueness without ordering.
+- Use `LinkedHashMap` when predictable insertion order matters.
+- Use `TreeMap` or `TreeSet` for sorted keys/elements.
+- Use `ArrayDeque` for stack/queue behavior instead of `Stack`.
 
-```java
-Collection<String> collection = new ArrayList<>();
-collection.add("Apple");
-collection.add("Banana");
-System.out.println(collection.size()); // Output: 2
-```
+## Equality and maps/sets
 
-### List Interface
-The List interface extends the Collection interface and represents an ordered collection of elements. It allows duplicate elements and provides methods for positional access and manipulation.
+Hash-based collections rely on `equals` and `hashCode`. Mutating an object after adding it to a `HashSet` can make it unreachable inside the set.
 
 ```java
-List<String> list = new ArrayList<>();
-list.add("Apple");
-list.add("Banana");
-list.add("Apple");
-System.out.println(list.get(0)); // Output: Apple
+Set<String> tags = new HashSet<>();
+tags.add("java");
+tags.add("java");
+System.out.println(tags.size()); // 1
 ```
 
-### Set Interface
-The Set interface extends the Collection interface and represents a collection of unique elements. It does not allow duplicate elements and provides methods for set operations such as union, intersection, and difference.
+## Iteration and modification
+
+Use an iterator's `remove` method or collection methods such as `removeIf` instead of modifying a collection directly during enhanced-for iteration.
 
 ```java
-Set<String> set = new HashSet<>();
-set.add("Apple");
-set.add("Banana");
-set.add("Apple"); // Ignored, as it's a duplicate
-System.out.println(set.size()); // Output: 2
+List<String> names = new ArrayList<>(List.of("Ada", "", "Grace"));
+names.removeIf(String::isBlank);
 ```
 
-### Map Interface
-The Map interface represents a mapping between keys and values. It does not extend the Collection interface but is an integral part of the Collections Framework. Maps do not allow duplicate keys.
+## Sorting
 
 ```java
-Map<String, Integer> map = new HashMap<>();
-map.put("Apple", 10);
-map.put("Banana", 5);
-System.out.println(map.get("Apple")); // Output: 10
+List<Person> people = new ArrayList<>();
+people.sort(Comparator.comparing(Person::lastName).thenComparing(Person::firstName));
 ```
 
-Understanding the Collections Framework is crucial for effective data manipulation and organization in Java applications.
+Use `Comparable` for natural ordering and `Comparator` for alternative orderings.
+
+## Unmodifiable collections
+
+`List.of`, `Set.of`, and `Map.of` create unmodifiable collections that reject `null`.
+
+```java
+List<String> priorities = List.of("high", "medium", "low");
+```
+
+## Exercises
+
+1. Count word frequencies with `Map<String, Integer>`.
+2. Remove duplicate records while preserving first-seen order.
+3. Benchmark lookup in a `List` versus a `HashSet` for a large dataset.

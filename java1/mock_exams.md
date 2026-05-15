@@ -1,50 +1,84 @@
 # Mock Exams
 
-## OCP SE 11 Mock Exam 1
+These mock exams are designed for review, not as a guarantee of certification readiness. Use a timer, do not look up answers during the attempt, and review every missed question by returning to the relevant chapter.
 
-### Section 1: Core Java Concepts
-1. What is the difference between == and equals() method in Java?
-2. Explain the concept of method overloading and method overriding with examples.
-3. How does Java support multi-threading and what are the benefits of using threads?
-4. Discuss the importance of immutability in Java and how it is achieved.
-5. What are the different types of access modifiers in Java and how do they impact class design?
+## Format
 
-### Section 2: Java SE 11 Features
-1. Describe the enhancements made to the String class in Java SE 11.
-2. How does the var keyword improve type inference in Java SE 11?
-3. Explain the concept of HTTP/2 support in Java SE 11 and its advantages.
-4. Discuss the changes introduced to the Optional class in Java SE 11.
-5. What are the benefits of using the HttpClient class for making HTTP requests in Java SE 11?
+- **Mini exam:** 20 questions in 30 minutes.
+- **Full review set:** 60 questions in 120 minutes.
+- **Passing target:** 75% for first pass, 85% before moving on.
 
-## OCP SE 11 Mock Exam 2
+## Mini exam A
 
-### Section 3: Essential APIs
-1. How does the Stream API in Java simplify data processing operations?
-2. Discuss the role of the Files class in Java for file manipulation.
-3. Explain the purpose of the java.util.function package and its functional interfaces.
-4. What are the differences between ArrayList and LinkedList in Java collections?
-5. How can developers use the java.util.concurrent package for parallel programming?
+1. Which statement about `String` is true?
+   - A. It is mutable.
+   - B. It is immutable.
+   - C. It cannot be used as a map key.
+   - D. It is a primitive type.
+2. Which collection rejects duplicate elements by contract?
+   - A. `List`
+   - B. `Set`
+   - C. `Queue`
+   - D. `Deque`
+3. What does try-with-resources require?
+   - A. Resource implements `AutoCloseable`.
+   - B. Resource is static.
+   - C. Resource is serializable.
+   - D. Resource is synchronized.
+4. Which interface is a functional interface?
+   - A. One with any number of default methods and exactly one abstract method.
+   - B. One with two abstract methods.
+   - C. One with no methods only.
+   - D. One that extends `Object`.
+5. Which API should be used for new date/time code?
+   - A. `java.util.Date`
+   - B. `java.util.Calendar`
+   - C. `java.time`
+   - D. `java.sql.Date` for all date values.
+6. What prevents SQL injection in JDBC?
+   - A. `Statement` with concatenation.
+   - B. `PreparedStatement` with parameters.
+   - C. Catching `SQLException`.
+   - D. Using `select *`.
+7. Which keyword prevents subclassing?
+   - A. `static`
+   - B. `volatile`
+   - C. `final`
+   - D. `transient`
+8. Which operation is terminal in a stream?
+   - A. `filter`
+   - B. `map`
+   - C. `sorted`
+   - D. `collect`
+9. Which class is appropriate for atomic counters?
+   - A. `AtomicInteger`
+   - B. `StringBuilder`
+   - C. `HashMap`
+   - D. `Optional`
+10. What is the safest default for class fields?
+    - A. `public`
+    - B. package-private mutable fields
+    - C. `private`, preferably `final` when possible
+    - D. `protected` everywhere
 
-### Section 4: Concurrency
-1. What are the challenges of concurrent programming and how does Java address them?
-2. Describe the synchronized keyword and its role in achieving thread safety.
-3. How do locks and conditions help in managing concurrent access to shared resources?
-4. Discuss the Executor framework in Java and its advantages for task execution.
-5. What is the significance of volatile keyword in Java concurrency?
+## Mini exam A answers
 
-## OCP SE 11 Mock Exam 3
+1. B
+2. B
+3. A
+4. A
+5. C
+6. B
+7. C
+8. D
+9. A
+10. C
 
-### Section 5: Exception Handling
-1. Explain the hierarchy of exception classes in Java and their relationships.
-2. How can developers create custom exceptions in Java for specific error scenarios?
-3. Discuss the try-with-resources statement and its benefits for resource management.
-4. What are checked and unchecked exceptions in Java and when should they be used?
-5. Provide examples of handling exceptions using try-catch and throw statements.
+## Review method
 
-### Section 6: I/O Operations
-1. How does Java handle input and output operations using streams and readers/writers?
-2. Discuss the differences between byte stream and character stream classes in Java I/O.
-3. Explain the purpose of serialization and deserialization in Java for object persistence.
-4. What are the advantages of using NIO for non-blocking I/O operations in Java?
-5. How can developers handle file operations efficiently using Java NIO?
+For each wrong answer:
 
+1. Identify the chapter.
+2. Explain why the correct answer is correct.
+3. Explain why each distractor is wrong.
+4. Write a small code sample proving the rule.

@@ -1,82 +1,71 @@
 # I/O Operations
 
 ## Overview
-In this section, we will delve into Input/Output (I/O) operations in Java, focusing on reading and writing data to files, streams, and other sources.
 
-## Topics Covered
-1. File Handling
-2. Streams and Readers/Writers
-3. Serialization and Deserialization
-4. NIO (New I/O) Package
-5. Working with Directories
+Java provides classic stream APIs in `java.io` and modern path/file APIs in `java.nio.file`. Prefer `Path` and `Files` for most file-system work in Java 11.
 
-## Detailed Explanations
-
-### File Handling
-File handling involves operations related to creating, reading, writing, and deleting files in Java. The java.io.File class is commonly used for file manipulation tasks.
+## Paths and files
 
 ```java
-File file = new File("example.txt");
-if (file.exists()) {
-    // Perform operations
+Path config = Path.of("config", "app.properties");
+if (Files.exists(config)) {
+    String text = Files.readString(config);
+    System.out.println(text);
 }
 ```
 
-### Streams and Readers/Writers
-Streams are used for reading and writing data sequentially, while Readers and Writers are used for character-based I/O operations. Java provides InputStream, OutputStream, Reader, and Writer classes for handling I/O operations.
+`Path` is an abstraction over file-system paths. Avoid string concatenation for paths; use `Path.of` and `resolve`.
+
+## Reading and writing text
+
+Specify character sets when external compatibility matters.
 
 ```java
-try (FileInputStream fis = new FileInputStream("input.txt");
-     FileOutputStream fos = new FileOutputStream("output.txt")) {
-    int data;
-    while ((data = fis.read()) != -1) {
-        fos.write(data);
-    }
+Path output = Path.of("report.txt");
+Files.writeString(output, "status=ok\n", StandardCharsets.UTF_8,
+        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+```
+
+## Streaming large files
+
+Do not load huge files into memory. Process them line-by-line.
+
+```java
+try (Stream<String> lines = Files.lines(Path.of("access.log"), StandardCharsets.UTF_8)) {
+    long errors = lines.filter(line -> line.contains("ERROR")).count();
+    System.out.println(errors);
 }
 ```
 
-### Serialization and Deserialization
-Serialization is the process of converting objects into a byte stream for storage or transmission, while deserialization is the reverse process of reconstructing objects from the byte stream. Java supports serialization through the Serializable interface and ObjectOutputStream/ObjectInputStream classes.
+The stream must be closed, so use try-with-resources.
+
+## Binary I/O
+
+Use byte streams for binary data.
 
 ```java
-class Person implements Serializable {
-    String name;
-    int age;
-    // Other fields and methods
-}
+byte[] bytes = Files.readAllBytes(Path.of("image.bin"));
+Files.write(Path.of("copy.bin"), bytes);
+```
 
-// Serialization
-try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("person.ser"))) {
-    oos.writeObject(new Person("Alice", 30));
-}
+For very large binary files, use buffered streams or `Files.copy`.
 
-// Deserialization
-try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("person.ser"))) {
-    Person person = (Person) ois.readObject();
-    System.out.println(person.getName());
+## Serialization warning
+
+Java object serialization is risky for untrusted data and tightly couples serialized form to implementation details. Prefer explicit formats such as JSON, Protocol Buffers, or database records for application data exchange.
+
+## File walking
+
+```java
+try (Stream<Path> paths = Files.walk(Path.of("src"))) {
+    paths.filter(Files::isRegularFile)
+         .filter(path -> path.toString().endsWith(".java"))
+         .forEach(System.out::println);
 }
 ```
 
-### NIO (New I/O) Package
-The java.nio package provides an alternative I/O mechanism introduced in Java 1.4, offering improved performance and scalability for I/O operations. It includes classes like Path, Files, and Channels for efficient file handling.
+## Exercises
 
-```java
-Path path = Paths.get("data.txt");
-List<String> lines = Files.readAllLines(path);
-for (String line : lines) {
-    System.out.println(line);
-}
-```
-
-### Working with Directories
-Java provides classes like File and Path for working with directories. Operations such as creating directories, listing files, and deleting directories can be performed using these classes.
-
-```java
-Path directory = Paths.get("data");
-if (!Files.exists(directory)) {
-    Files.createDirectory(directory);
-}
-```
-
-Mastering I/O operations in Java is essential for handling data input and output effectively in your applications.
-
+1. Write a program that counts words in a UTF-8 text file.
+2. Copy a directory tree while preserving relative paths.
+3. Watch a directory for create/modify/delete events using `WatchService`.

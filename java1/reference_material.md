@@ -1,36 +1,34 @@
 # Reference Material
 
-## Java SE 11 Documentation
-- [Official Java SE 11 Documentation](https://docs.oracle.com/en/java/javase/11/)
+## Primary references
 
-## Java APIs Documentation
-- [Java Platform Standard Edition 11 API Specification](https://docs.oracle.com/en/java/javase/11/docs/api/index.html)
+- Java Language Specification for language rules.
+- Java Virtual Machine Specification for bytecode and runtime behavior.
+- Java SE 11 API documentation for library classes.
+- JUnit 5 user guide for testing APIs.
 
-## Java Programming Books
-- "Effective Java" by Joshua Bloch
-- "Java Concurrency in Practice" by Brian Goetz et al.
-- "Head First Design Patterns" by Eric Freeman et al.
+## Recommended books
 
-## Online Courses
-- [Java Programming Masterclass for Software Developers](https://www.udemy.com/course/java-the-complete-java-developer-course/)
-- [Java Multithreading and Concurrency](https://www.pluralsight.com/courses/java-multithreading-concurrency)
+- *Effective Java* by Joshua Bloch for API design and best practices.
+- *Java Concurrency in Practice* by Brian Goetz et al. for concurrency fundamentals.
+- *Modern Java in Action* for lambdas, streams, and modern idioms.
+- *Core Java* by Cay Horstmann for broad language and library coverage.
 
-## OCP SE 11 Exam Preparation Materials
-- [OCP Oracle Certified Professional Java SE 11 Programmer I Study Guide](https://www.oreilly.com/library/view/ocp-oracle-certified/9781119584704/)
-- [OCP Oracle Certified Professional Java SE 11 Programmer II Study Guide](https://www.oreilly.com/library/view/ocp-oracle-certified/9781119584711/)
+## Practice approach
 
-## Sample Questions and Mock Exams
-- [Whizlabs OCP Java SE 11 Practice Tests](https://www.whizlabs.com/ocp-java-se-11/)
-- [Enthuware OCP Java SE 11 Mock Exams](https://enthuware.com/java-certification-mock-exams/oracle-certified-professional-ocp-java-se-11)
+1. Read a concept.
+2. Write a tiny example.
+3. Break the example intentionally.
+4. Read compiler or runtime errors carefully.
+5. Fix the example and document the rule.
 
-## Online Forums and Communities
-- [Stack Overflow Java Community](https://stackoverflow.com/questions/tagged/java)
-- [Reddit Java Community](https://www.reddit.com/r/java/)
+## Documentation habits
 
-## Cheat Sheets
-- [Java SE 11 Cheat Sheet](https://zeroturnaround.com/rebellabs/java-11-cheat-sheet/)
+When using API docs, check:
 
-## Additional Resources
-- [Java Design Patterns](https://refactoring.guru/design-patterns/java)
-- [Java Security Best Practices](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
-
+- Null handling.
+- Mutability.
+- Thread-safety.
+- Exception behavior.
+- Big-O or performance notes.
+- Version availability.
