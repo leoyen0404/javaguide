@@ -1,41 +1,71 @@
 # Practice Questions
 
-## Core Java Concepts
+Use these questions after each chapter. Write answers in your own words, then verify by compiling small examples.
 
-1. What are variables in Java and how are they declared?
-2. Explain the difference between primitive data types and reference data types in Java.
-3. How do control flow statements like if-else and switch-case work in Java?
-4. What is the significance of object-oriented programming principles in Java development?
-5. Describe the concept of inheritance and how it is implemented in Java.
-6. How does encapsulation contribute to the security and maintainability of Java code?
-7. What are interfaces and abstract classes, and how are they used in Java?
-8. Discuss the importance of exception handling in Java programming.
-9. How are packages and modules organized in Java projects?
-10. Provide an example of a method with exception handling in Java.
+## Core Java
 
-## Java SE 11 Features
+1. What is the difference between a primitive variable and a reference variable?
+2. Why does `==` behave differently for primitives and objects?
+3. When should a class override `equals` and `hashCode`?
+4. Explain overload resolution for `print(int)`, `print(long)`, and `print(Integer)`.
+5. Why should fields usually be private?
 
-1. What is the purpose of the Local-Variable Syntax for Lambda Parameters feature in Java SE 11?
-2. Explain the functionality and benefits of the HTTP Client API introduced in Java SE 11.
-3. How does Nest-Based Access Control enhance the security of Java applications?
-4. What are Dynamic Class-File Constants and how do they improve code maintainability?
-5. Discuss the role of the Epsilon Garbage Collector in Java memory management.
-6. How can developers benefit from using the Flight Recorder feature in Java SE 11?
-7. What improvements does the Z Garbage Collector bring to garbage collection in Java?
-8. How does Java SE 11 support Unicode 10 and what implications does it have for developers?
-9. What advantages does TLS 1.3 support offer for secure communication in Java applications?
-10. Explain the concept of Single-File Source-Code Launch and its practical applications.
+## Java SE 11 features
+
+1. When does `var` improve readability, and when does it hide intent?
+2. What is the difference between classpath and module path execution?
+3. Why are `List.of` results different from `new ArrayList<>()`?
+4. What Java 11 `String` methods help with whitespace processing?
+5. What changed when Java EE modules were removed from the JDK?
 
 ## Essential APIs
 
-1. What is the java.lang package in Java and what are its core classes and functionalities?
-2. How does the java.util package provide data structures and utilities for Java developers?
-3. Explain the role of the java.io package in handling input and output operations in Java.
-4. What are the key components of the java.nio package and how do they enhance file handling?
-5. How does the java.net package facilitate network communication in Java applications?
-6. Describe the features and benefits of the java.time package for date and time manipulation.
-7. What functionalities does the java.util.concurrent package offer for managing concurrent operations?
-8. How can developers leverage the java.util.stream package for stream processing in Java?
-9. Discuss the use cases of the java.lang.reflect package for runtime type information.
-10. What security mechanisms does the java.security package provide for Java applications?
+1. Which `java.time` type should you use for a database creation timestamp?
+2. Why is `BigDecimal` preferred over `double` for currency?
+3. What are the risks of unboxing wrapper values?
+4. Why is `Optional.get()` usually a smell?
+5. When should a regex be precompiled as a `Pattern`?
 
+## Concurrency
+
+1. What race condition can occur in `count++`?
+2. Why should executors be shut down?
+3. Compare `synchronized`, `ReentrantLock`, and `AtomicInteger`.
+4. What makes a stream pipeline unsafe for parallel execution?
+5. How can lock ordering prevent deadlock?
+
+## Exceptions and I/O
+
+1. What is the difference between checked and unchecked exceptions?
+2. Why should wrapped exceptions keep the original cause?
+3. What does try-with-resources do when closing fails?
+4. Why is `Files.lines` usually used in try-with-resources?
+5. What is path traversal and how can it be prevented?
+
+## Collections, generics, and lambdas
+
+1. Choose a collection for unique ordered insertion and explain why.
+2. Why must map keys be stable with respect to `equals` and `hashCode`?
+3. Explain PECS using a method that copies values between lists.
+4. Why can `List<String>` not be assigned to `List<Object>`?
+5. What is the difference between `map` and `flatMap` in streams?
+
+## JDBC and advanced runtime topics
+
+1. Why are prepared statements safer than string-built SQL?
+2. What should happen if the second step of a two-step transaction fails?
+3. When are annotations better than naming conventions?
+4. What risks does reflection introduce?
+5. What information can a thread dump reveal?
+
+## Testing, security, and design
+
+1. What makes a unit test deterministic?
+2. Why should time be injected with `Clock` in tests?
+3. Name three kinds of secrets that must not be committed.
+4. When does a strategy pattern improve design?
+5. What should be checked during a Java code review?
+
+## Answer guidance
+
+Strong answers should include a rule, a reason, and a small example. For coding questions, prefer runnable snippets over abstract descriptions.

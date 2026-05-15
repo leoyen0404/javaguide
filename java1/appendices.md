@@ -1,30 +1,43 @@
 # Appendices
 
-## Overview
-This section contains additional information and resources that supplement the main content of this guide.
+## Appendix A: Development tools
 
-## Topics Covered
-1. Appendix A: Java Development Tools
-2. Appendix B: Common Java Design Patterns
-3. Appendix C: Java Concurrency
-4. Appendix D: Java Security
-5. Appendix E: Java Version History
+- JDK 11 or newer for compiling and running examples.
+- IDE such as IntelliJ IDEA, Eclipse, VS Code, or NetBeans.
+- Build tool such as Maven or Gradle for dependencies and test execution.
+- Git for version control.
+- JDK tools such as `javac`, `java`, `jar`, `javadoc`, `javap`, `jcmd`, and `jstack`.
 
-## Detailed Explanations
+## Appendix B: Standard project layout
 
-### Appendix A: Java Development Tools
-This appendix provides an overview of commonly used development tools in Java, including Integrated Development Environments (IDEs), build tools, and debugging tools.
+```text
+project/
+  pom.xml or build.gradle
+  src/main/java
+  src/main/resources
+  src/test/java
+  src/test/resources
+```
 
-### Appendix B: Common Java Design Patterns
-Explore common design patterns used in Java applications, such as Singleton, Factory, Observer, and Strategy patterns. Understand their implementations and when to apply them.
+## Appendix C: Java version awareness
 
-### Appendix C: Java Concurrency
-Learn about concurrency concepts in Java, including threads, synchronization, locks, and concurrent data structures. Discover best practices for writing multithreaded Java applications.
+This guide targets Java SE 11. If you use newer features such as records, sealed classes, pattern matching, switch expressions, or virtual threads, label them clearly and configure your build accordingly.
 
-### Appendix D: Java Security
-Understand security concepts in Java, including sandboxing, access control, cryptography, and secure coding practices. Learn how to secure Java applications against common security threats.
+## Appendix D: Troubleshooting checklist
 
-### Appendix E: Java Version History
-Review the history of Java versions, including major releases, features, and enhancements introduced in each version. Gain insights into the evolution of the Java platform.
+- Does the code compile with the intended JDK?
+- Are classpath or module path entries correct?
+- Are resources closed?
+- Are dependencies present at runtime?
+- Are tests order-independent?
+- Is the failure deterministic or timing-dependent?
 
-The appendices provide valuable supplementary information to deepen your understanding of Java development concepts and practices.
+## Appendix E: Glossary
+
+- **API:** A public contract for using code.
+- **Bytecode:** JVM instruction format compiled from Java source.
+- **Classpath:** Runtime/search path for classes and resources.
+- **Heap:** JVM memory area for objects.
+- **Immutability:** Object state cannot change after construction.
+- **JIT:** Just-in-time compiler that optimizes hot bytecode.
+- **Module:** Named unit declaring dependencies and exported packages.

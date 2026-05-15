@@ -1,94 +1,69 @@
 # Unit Testing with JUnit
 
 ## Overview
-Unit testing is a crucial aspect of software development to ensure the correctness and reliability of code. JUnit is a popular testing framework for Java that simplifies the process of writing and executing unit tests.
 
-## Topics Covered
-1. Introduction to Unit Testing
-2. Setting Up JUnit Environment
-3. Writing Test Cases
-4. Assertions and Matchers
-5. Test Suites
-6. Parameterized Tests
-7. Mocking with Mockito
-8. Test Driven Development (TDD)
-9. Best Practices for Unit Testing
+Unit tests verify small units of behavior quickly and deterministically. Java SE does not include JUnit, but JUnit 5 is the modern standard for Java unit testing.
 
-## Detailed Explanations
+## Test structure
 
-### Introduction to Unit Testing
-Unit testing involves testing individual units or components of code in isolation to verify their functionality. It helps in identifying bugs early in the development cycle.
-
-### Setting Up JUnit Environment
-To start writing JUnit tests, you need to include the JUnit library in your project build path. You can use tools like Maven or Gradle for dependency management.
+A good unit test follows Arrange, Act, Assert.
 
 ```java
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-```
+class CalculatorTest {
+    @Test
+    void addsTwoNumbers() {
+        Calculator calculator = new Calculator();
 
-### Writing Test Cases
-Test cases are methods annotated with @Test that define specific scenarios to test the behavior of methods or classes.
+        int result = calculator.add(2, 3);
 
-```java
-@Test
-void testAddition() {
-    Calculator calculator = new Calculator();
-    assertEquals(5, calculator.add(2, 3));
+        assertEquals(5, result);
+    }
 }
 ```
 
-### Assertions and Matchers
-JUnit provides a variety of assertion methods and matchers to validate expected outcomes in tests.
+## Naming
+
+Use descriptive names that explain behavior:
+
+- `withdrawRejectsNegativeAmount`
+- `parserReturnsEmptyWhenInputIsBlank`
+- `repositoryUsesPreparedStatementParameters`
+
+## Assertions
+
+JUnit 5 assertions include `assertEquals`, `assertTrue`, `assertThrows`, `assertAll`, and timeout assertions.
 
 ```java
-assertEquals(expected, actual);
-assertTrue(condition);
-assertThat(actual, matcher);
+IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> account.deposit(-1));
+assertEquals("amount must be positive", ex.getMessage());
 ```
 
-### Test Suites
-Test suites allow you to group related test cases and run them together for comprehensive testing.
+## Test doubles
 
-```java
-@RunWith(Suite.class)
-@Suite.SuiteClasses({CalculatorTest.class, StringUtilsTest.class})
-public class TestSuite {
-    // Test suite definition
-}
-```
+Use fakes, stubs, and mocks to isolate behavior when real dependencies are slow, nondeterministic, or external. Avoid over-mocking value objects and simple data structures.
 
-### Parameterized Tests
-Parameterized tests enable running the same test logic with different input values to cover multiple scenarios.
+## Parameterized tests
+
+Parameterized tests reduce duplication for input/output tables.
 
 ```java
 @ParameterizedTest
-@ValueSource(ints = {1, 2, 3})
-void testIsPositive(int number) {
-    assertTrue(number > 0);
+@CsvSource({"1,2,3", "2,3,5"})
+void adds(int a, int b, int expected) {
+    assertEquals(expected, new Calculator().add(a, b));
 }
 ```
 
-### Mocking with Mockito
-Mockito is a popular mocking framework that allows creating mock objects to simulate dependencies in tests.
+## Test quality
 
-```java
-@Mock
-private DataService dataService;
+- Tests should be independent and order-insensitive.
+- Avoid sleeping in tests; control time with injected clocks.
+- Use temporary directories for file-system tests.
+- Keep unit tests fast and push full-stack checks into integration tests.
 
-@Test
-void testProcessData() {
-    when(dataService.retrieveData()).thenReturn("Mocked Data");
-    // Test logic using mocked dataService
-}
-```
+## Exercises
 
-### Test Driven Development (TDD)
-TDD is a development approach where tests are written before implementing the actual code. It promotes a cycle of writing tests, implementing code, and refactoring.
-
-### Best Practices for Unit Testing
-- Write independent and isolated tests.
-- Use descriptive test method names.
-- Maintain a good balance between unit and integration tests.
-- Regularly refactor test code for readability and maintainability.
-
+1. Write tests for a validation class using `assertThrows`.
+2. Refactor a time-dependent class to accept `Clock`.
+3. Create a parameterized test for a string normalizer.

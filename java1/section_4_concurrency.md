@@ -1,69 +1,99 @@
-# Section 4: Concurrency
+# Concurrency
 
-Concurrency in Java allows multiple tasks to run in parallel, enhancing performance and responsiveness. This section covers key concepts and techniques for managing concurrent operations.
+## Overview
 
-## Introduction to Concurrency
-Concurrency vs. Parallelism:
-- Concurrency enables tasks to make progress in overlapping time periods.
-- Parallelism involves tasks running simultaneously on multiple processors.
+Concurrency lets a program make progress on multiple tasks, but it also introduces race conditions, deadlocks, visibility problems, and testing difficulty. In Java, prefer high-level concurrency utilities over manually managing raw threads.
 
-## Thread Basics
-Threads in Java:
-- A thread represents an independent path of execution within a program.
-- Threads share the same memory space but have their own execution stack.
+## Threads and tasks
 
-Creating Threads:
+A `Thread` executes a `Runnable`, but application code usually submits tasks to an `ExecutorService`.
+
 ```java
-class MyThread extends Thread {
-    public void run() {
-        // Thread logic here
+ExecutorService pool = Executors.newFixedThreadPool(4);
+try {
+    Future<Integer> result = pool.submit(() -> 40 + 2);
+    System.out.println(result.get());
+} finally {
+    pool.shutdown();
+}
+```
+
+Always shut down executors you create.
+
+## Shared state and synchronization
+
+Race conditions occur when multiple threads access shared mutable state and at least one access writes.
+
+```java
+class Counter {
+    private int value;
+
+    synchronized void increment() {
+        value++;
+    }
+
+    synchronized int get() {
+        return value;
     }
 }
-
-MyThread thread = new MyThread();
-thread.start();
 ```
 
-## Synchronization
-Synchronization in Java:
-- Prevents multiple threads from accessing shared resources concurrently.
-- Ensures data consistency and avoids race conditions.
+` synchronized` provides mutual exclusion and establishes visibility guarantees. Keep synchronized sections short.
 
-Using synchronized keyword:
+## Locks and atomics
+
+`ReentrantLock` gives explicit lock control, while atomic classes provide lock-free operations for simple state.
+
 ```java
-public synchronized void synchronizedMethod() {
-    // Synchronized method logic
-}
+AtomicInteger count = new AtomicInteger();
+count.incrementAndGet();
 ```
 
-## Thread Safety
-Thread-safe Collections:
-- Collections that can be safely accessed by multiple threads.
-- Examples include ConcurrentHashMap, CopyOnWriteArrayList.
+Use atomics for independent counters or flags. Use locks when updating related state together.
 
-## Executors Framework
-ExecutorService interface:
-- Simplifies managing thread execution and provides thread pooling.
-- Allows submitting tasks for asynchronous execution.
+## Concurrent collections
 
-Using Executors:
+Use purpose-built collections instead of wrapping ordinary collections manually.
+
+- `ConcurrentHashMap` for high-throughput concurrent maps.
+- `CopyOnWriteArrayList` for read-mostly listener lists.
+- `BlockingQueue` for producer/consumer handoff.
+
 ```java
-ExecutorService executor = Executors.newFixedThreadPool(5);
-executor.submit(() -> {
-    // Task logic here
-});
-executor.shutdown();
+BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+queue.put("job");
+String job = queue.take();
 ```
 
-## Concurrency Utilities
-Java.util.concurrent package:
-- Provides high-level concurrency utilities like locks, semaphores, and barriers.
-- Facilitates building efficient and scalable concurrent applications.
+## Futures and completable futures
 
-## Best Practices
-- Use higher-level concurrency utilities over low-level constructs like wait/notify.
-- Avoid excessive synchronization to prevent performance bottlenecks.
-- Test concurrent code thoroughly to ensure correctness under varying conditions.
+`CompletableFuture` composes asynchronous work.
 
-This concludes the Concurrency section, highlighting essential concepts and practices for effective concurrent programming in Java.
+```java
+CompletableFuture<String> greeting = CompletableFuture
+        .supplyAsync(() -> "hello")
+        .thenApply(String::toUpperCase);
+```
 
+Handle exceptions explicitly with `exceptionally`, `handle`, or completion checks.
+
+## Deadlock and liveness
+
+Deadlock can happen when threads acquire locks in inconsistent order. Liveness problems also include starvation and livelock.
+
+Prevention techniques:
+
+- Acquire locks in a consistent global order.
+- Avoid calling external code while holding a lock.
+- Prefer immutable objects and message passing.
+- Use timeouts where blocking is unavoidable.
+
+## Parallel streams
+
+Parallel streams can help CPU-bound, independent operations on large datasets, but they use the common fork-join pool by default. Avoid parallel streams for blocking I/O or operations with side effects.
+
+## Exercises
+
+1. Implement a producer/consumer workflow with `BlockingQueue`.
+2. Replace a synchronized counter with `AtomicInteger`; explain when the replacement is safe.
+3. Write a `CompletableFuture` pipeline that recovers from a failed remote call.

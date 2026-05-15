@@ -1,110 +1,157 @@
 # Core Java Concepts
 
-## Overview
-In this section, we will cover fundamental concepts of Java programming that form the building blocks for mastering Java SE 11.
+## Big picture
 
-## Topics Covered
-1. Variables and Data Types
-2. Operators
-3. Control Flow Statements
-4. Methods and Functions
-5. Object-Oriented Programming (OOP) Principles
-6. Inheritance and Polymorphism
-7. Encapsulation and Abstraction
-8. Interfaces and Abstract Classes
-9. Packages and Modules
-10. Exception Handling Basics
+Core Java is the set of language rules that every other topic depends on: types, expressions, control flow, methods, classes, objects, packages, modules, and the rules for inheritance and access. Learn these rules until you can predict compiler behavior without running the program.
 
-## Detailed Explanations
+## Types and variables
 
-### Variables and Data Types
-Variables are used to store data in a program. Java supports various data types such as int, double, boolean, and String.
+Java is statically typed: every expression has a compile-time type. Primitive values store raw values; reference variables store references to objects.
+
+| Category | Examples | Notes |
+| --- | --- | --- |
+| Integer primitives | `byte`, `short`, `int`, `long` | Integer literals are `int` unless suffixed with `L` or assignable by constant narrowing. |
+| Floating primitives | `float`, `double` | Floating literals are `double` unless suffixed with `F`. Use `BigDecimal` for money. |
+| Other primitives | `char`, `boolean` | `boolean` is not numeric and cannot be converted to `int`. |
+| References | `String`, arrays, classes, interfaces, enums | Can be `null` unless guarded by design or validation. |
 
 ```java
-int age = 30;
-double price = 19.99;
-boolean isJavaFun = true;
-String message = "Hello, Java!";
+int count = 42;
+long population = 7_800_000_000L;
+String name = "Duke";
+var localName = name.toUpperCase(); // Java 10+, local variables only
 ```
 
-### Operators
-Operators are symbols that perform operations on operands. Java includes arithmetic, relational, logical, and assignment operators.
+## Operators and expressions
+
+Java evaluates expressions using precedence, associativity, and numeric promotion rules. Prefer parentheses when intent might be unclear.
 
 ```java
-int sum = 10 + 5;
-boolean isEqual = (5 == 5);
-int result = (isTrue && isFalse) ? 1 : 0;
+int x = 10;
+int y = 3;
+System.out.println(x / y);      // 3, integer division
+System.out.println(x / 3.0);    // 3.333..., double division
+System.out.println(++x);        // increment then read
+System.out.println(x++);        // read then increment
 ```
 
-### Control Flow Statements
-Control flow statements determine the order in which statements are executed. Java supports if-else, switch-case, while, do-while, and for loops.
+Important rules:
+
+- `==` compares primitive values or reference identity; use `.equals` for logical object equality.
+- `&&` and `||` short-circuit; `&` and `|` also work on booleans but evaluate both sides.
+- String concatenation with `+` converts operands left-to-right.
+
+## Control flow
+
+Use `if`, `switch`, loops, `break`, `continue`, and `return` to control execution. Keep branch bodies small and extract methods when nesting becomes hard to read.
 
 ```java
-if (condition) {
-    // code block
-} else {
-    // code block
-}
-
-switch (value) {
-    case 1:
-        // code block
-        break;
-    default:
-        // code block
-}
-
-while (condition) {
-    // code block
-}
-
-for (int i = 0; i < 5; i++) {
-    // code block
+for (int i = 1; i <= 3; i++) {
+    if (i % 2 == 0) {
+        System.out.println("even " + i);
+    } else {
+        System.out.println("odd " + i);
+    }
 }
 ```
 
-### Methods and Functions
-Methods are reusable blocks of code that perform specific tasks. They can have parameters and return values.
+Java SE 11 uses the traditional `switch` statement; switch expressions with `yield` are from later Java versions and should not be used in Java 11-only code.
+
+## Methods
+
+A method signature includes the method name and parameter types, not the return type. Overloading chooses among methods at compile time.
 
 ```java
-public int add(int a, int b) {
-    return a + b;
+class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
 }
 ```
 
-### Object-Oriented Programming (OOP) Principles
-OOP is a programming paradigm based on the concept of objects. It includes principles like encapsulation, inheritance, and polymorphism.
+Guidelines:
 
-### Inheritance and Polymorphism
-Inheritance allows a class to inherit properties and behavior from another class. Polymorphism enables objects to be treated as instances of their parent class.
+- Make methods do one thing and name them with verbs.
+- Validate public method arguments at the boundary.
+- Prefer returning values over mutating hidden state when practical.
 
-### Encapsulation and Abstraction
-Encapsulation hides the internal state of an object and restricts access to it. Abstraction focuses on essential characteristics while hiding implementation details.
+## Classes and objects
 
-### Interfaces and Abstract Classes
-Interfaces define a contract for classes to implement specific methods. Abstract classes provide partial implementation and cannot be instantiated.
+Classes describe state and behavior. Objects are runtime instances.
 
-### Packages and Modules
-Packages organize classes into namespaces to avoid naming conflicts. Modules provide a higher level of encapsulation and dependency management.
+```java
+public class Account {
+    private final String id;
+    private long cents;
 
-### Exception Handling Basics
-Exception handling allows the program to respond to unexpected events gracefully. It includes try-catch blocks to handle exceptions.
+    public Account(String id, long openingBalanceCents) {
+        this.id = id;
+        this.cents = openingBalanceCents;
+    }
 
-## Practice Questions
-1. What is the difference between a class and an object in Java?
-2. Explain the concept of method overloading with an example.
-3. How does Java support multiple inheritance through interfaces?
+    public void deposit(long amountCents) {
+        if (amountCents <= 0) throw new IllegalArgumentException("amount must be positive");
+        cents += amountCents;
+    }
 
-## Mock Exam Question
-Which of the following statements is true about Java variables?
-A) Variables in Java must be explicitly declared with a data type.
-B) Java variables can be declared without initializing them.
-C) Once a variable is declared final, its value cannot be changed.
-D) Java variables can have the same name within the same scope.
+    public long balanceCents() {
+        return cents;
+    }
+}
+```
 
-## Real-World Example
-Consider a banking application where different account types are modeled using classes and inheritance to manage transactions efficiently.
+Encapsulation means callers use behavior instead of directly editing fields. It protects invariants such as "balance changes only through validated operations."
 
-## Case Study
-Explore how a retail management system utilizes Java's OOP principles to handle inventory, sales, and customer data effectively.
+## Inheritance, interfaces, and polymorphism
 
+Inheritance models an "is-a" relationship. Interfaces model capabilities or contracts.
+
+```java
+interface Payable {
+    long amountDueCents();
+}
+
+class Invoice implements Payable {
+    private final long amount;
+
+    Invoice(long amount) {
+        this.amount = amount;
+    }
+
+    @Override
+    public long amountDueCents() {
+        return amount;
+    }
+}
+```
+
+Use inheritance sparingly. Composition is often safer because it avoids fragile base-class coupling.
+
+## Packages and modules
+
+Packages organize classes and provide a namespace. Java modules, introduced in Java 9, declare explicit dependencies and exported packages in `module-info.java`.
+
+```java
+module com.example.billing {
+    exports com.example.billing.api;
+    requires java.sql;
+}
+```
+
+## Common pitfalls
+
+- Confusing reference equality (`==`) with logical equality (`equals`).
+- Using floating point for currency.
+- Creating mutable public fields.
+- Catching broad exceptions instead of validating specific inputs.
+- Treating inheritance as a code-sharing tool rather than a substitutability contract.
+
+## Exercises
+
+1. Create a `Money` class that stores cents as `long`, validates input, and formats dollars.
+2. Write an interface `DiscountPolicy` and two implementations.
+3. Demonstrate method overloading with `int`, `long`, and `Integer` arguments; explain which overload is selected.

@@ -1,132 +1,74 @@
 # Design Patterns
 
 ## Overview
-Design patterns are reusable solutions to common problems encountered in software design and development. Understanding and applying design patterns can help improve the structure, flexibility, and maintainability of Java applications.
 
-## Patterns Covered
-1. Creational Patterns
-   - Singleton Pattern
-   - Factory Method Pattern
-   - Abstract Factory Pattern
-   - Builder Pattern
-   - Prototype Pattern
+Design patterns are named solutions to recurring design problems. Use them to communicate and simplify, not to add ceremony. Java's language features and libraries often provide lightweight alternatives.
 
-2. Structural Patterns
-   - Adapter Pattern
-   - Bridge Pattern
-   - Composite Pattern
-   - Decorator Pattern
-   - Facade Pattern
-   - Flyweight Pattern
-   - Proxy Pattern
+## Creational patterns
 
-3. Behavioral Patterns
-   - Chain of Responsibility Pattern
-   - Command Pattern
-   - Interpreter Pattern
-   - Iterator Pattern
-   - Mediator Pattern
-   - Memento Pattern
-   - Observer Pattern
-   - State Pattern
-   - Strategy Pattern
-   - Template Method Pattern
-   - Visitor Pattern
+### Factory Method
 
-## Detailed Explanations
-
-### Singleton Pattern
-The Singleton Pattern ensures that a class has only one instance and provides a global point of access to that instance.
+Encapsulates object creation behind a method.
 
 ```java
-public class Singleton {
-    private static Singleton instance;
-
-    private Singleton() {
-    }
-
-    public static Singleton getInstance() {
-        if (instance == null) {
-            instance = new Singleton();
-        }
-        return instance;
-    }
-}
-```
-
-### Factory Method Pattern
-The Factory Method Pattern defines an interface for creating objects but allows subclasses to alter the type of objects that will be created.
-
-```java
-public interface Product {
-    void operation();
+interface NotificationSender {
+    void send(String message);
 }
 
-public class ConcreteProduct implements Product {
-    @Override
-    public void operation() {
-        System.out.println("Performing operation in ConcreteProduct");
-    }
-}
-
-public interface ProductFactory {
-    Product createProduct();
-}
-
-public class ConcreteProductFactory implements ProductFactory {
-    @Override
-    public Product createProduct() {
-        return new ConcreteProduct();
-    }
-}
-```
-
-### Observer Pattern
-The Observer Pattern defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
-
-```java
-public interface Observer {
-    void update();
-}
-
-public class ConcreteObserver implements Observer {
-    @Override
-    public void update() {
-        System.out.println("ConcreteObserver has been updated");
-    }
-}
-
-public interface Subject {
-    void attach(Observer observer);
-    void detach(Observer observer);
-    void notifyObservers();
-}
-
-public class ConcreteSubject implements Subject {
-    private List<Observer> observers = new ArrayList<>();
-
-    @Override
-    public void attach(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void detach(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update();
+class NotificationSenderFactory {
+    NotificationSender create(String channel) {
+        switch (channel) {
+            case "email": return new EmailSender();
+            case "sms": return new SmsSender();
+            default: throw new IllegalArgumentException("unknown channel");
         }
     }
 }
 ```
 
-## Real-World Examples
-Design patterns are commonly used in various software projects. For example, the Observer Pattern can be seen in GUI frameworks for event handling, the Factory Method Pattern is used in libraries for object creation, and the Decorator Pattern is applied in stream processing libraries.
+### Builder
 
-## Case Studies
-Case studies on applying design patterns in real-world scenarios will be provided in this section to demonstrate the practical benefits and applications of design patterns in Java development.
+Useful for objects with many optional fields and invariants.
 
+## Structural patterns
+
+### Adapter
+
+Converts one interface into another expected by client code. Common when integrating legacy systems or third-party libraries.
+
+### Decorator
+
+Adds behavior around another implementation of the same interface, such as caching, logging, or validation.
+
+## Behavioral patterns
+
+### Strategy
+
+Selects interchangeable behavior at runtime.
+
+```java
+interface PricingStrategy {
+    long price(Order order);
+}
+```
+
+### Observer
+
+Notifies listeners about events. Be careful with listener lifecycle to avoid memory leaks.
+
+### Template Method
+
+Defines an algorithm skeleton in a superclass while subclasses customize steps. Prefer composition if subclassing creates tight coupling.
+
+## Pattern selection checklist
+
+- Does the pattern remove duplication or clarify intent?
+- Can a simple method, lambda, or interface solve the problem?
+- Does the pattern protect a real variation point?
+- Will future maintainers understand the abstraction?
+
+## Exercises
+
+1. Implement a strategy for shipping cost calculation.
+2. Wrap a repository with a caching decorator.
+3. Replace an over-engineered singleton with dependency injection.

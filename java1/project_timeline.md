@@ -1,20 +1,24 @@
 # Project Timeline
 
-## Week 1-2: Research and outline the structure of the guide.
-During this phase, the focus will be on researching the Java SE 11 topics relevant to the OCP SE 11 exam and outlining the structure of the ultimate guide.
+This project is now organized as a living Java SE 11 handbook.
 
-## Week 3-6: Write content for each section, including explanations, code snippets, examples, and practice questions.
-This period will involve writing detailed explanations, providing code snippets, examples, and creating practice questions for each section of the guide.
+## Phase 1: Reconstruction
 
-## Week 7-8: Review and revise the content, ensuring clarity, accuracy, and completeness.
-The content will be reviewed and revised to ensure that it is clear, accurate, and comprehensive, meeting the standards required for the OCP SE 11 exam.
+- Replace sparse generated notes with structured chapters.
+- Add a clear README and main guide index.
+- Normalize chapter format around overview, examples, pitfalls, and exercises.
+- Add practice, mock exam, cheat sheet, case study, and reference pages.
 
-## Week 9-10: Finalize the markdown file, add appendices and supplementary material.
-During this phase, the markdown file will be finalized, appendices will be added, and supplementary materials such as reference material, APIs documentation, cheat sheets, and additional resources will be included.
+## Phase 2: Validation
 
-## Week 11-12: Conduct testing and validation of practice questions and mock exams.
-Testing and validation of practice questions and mock exams resembling the actual OCP SE 11 exam will be carried out to ensure their effectiveness in preparing readers for the certification exam.
+- Check internal Markdown links.
+- Compile larger Java examples as standalone snippets when extracted.
+- Review chapters for Java SE 11 compatibility.
+- Add answers or explanations for additional practice sets.
 
-## Week 13: Prepare project documentation and final submission.
-In the final week, project documentation will be prepared, and the completed ultimate guide for mastering Java SE 11 will be submitted for review and distribution.
+## Phase 3: Expansion
 
+- Add runnable sample projects under a dedicated examples directory.
+- Add diagrams for JVM memory, collection choices, and JDBC transaction flow.
+- Add chapter quizzes with detailed explanations.
+- Add migration notes for newer Java LTS releases while keeping Java 11 content intact.

@@ -1,62 +1,62 @@
 # JVM Internals
 
 ## Overview
-In this section, we will explore the internals of the Java Virtual Machine (JVM), diving into its architecture and how it executes Java bytecode.
 
-## Topics Covered
-1. Introduction to JVM
-2. Class Loading
-3. Memory Management
-4. Garbage Collection
-5. Execution Engine
+The Java Virtual Machine executes bytecode, manages memory, loads classes, performs just-in-time compilation, and provides diagnostics. Understanding the JVM helps you debug performance and production issues.
 
-## Detailed Explanations
+## Compilation pipeline
 
-### Introduction to JVM
-The Java Virtual Machine (JVM) is an abstract computing machine that enables Java bytecode to be executed on different platforms. It provides features such as memory management, garbage collection, and security.
+`javac` compiles `.java` source into `.class` bytecode. The JVM loads bytecode, verifies it, interprets it initially, and may compile hot methods to native code with the JIT compiler.
 
-```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
+```bash
+javac Example.java
+javap -c Example
 ```
 
-### Class Loading
-Class loading is the process of loading class files into the JVM memory. The JVM dynamically loads classes as they are referenced during runtime.
+## Class loading
 
-```java
-ClassLoader classLoader = MyClass.class.getClassLoader();
-Class<?> myClass = classLoader.loadClass("com.example.MyClass");
-```
+Class loading generally follows loading, linking, and initialization. Class loaders form a delegation hierarchy and define class identity together with the class name.
 
-### Memory Management
-Memory management in the JVM involves allocating and deallocating memory for objects and data structures. The JVM manages memory through the use of the heap and stack.
+## Memory areas
 
-```java
-Object obj = new Object(); // Memory allocated on the heap
-int x = 10; // Memory allocated on the stack
-```
+- Heap: objects and arrays.
+- Thread stacks: frames for method calls and local variables.
+- Metaspace: class metadata.
+- Code cache: compiled native code.
+- Direct memory: off-heap buffers used by APIs such as NIO.
 
-### Garbage Collection
-Garbage collection is the process of reclaiming memory occupied by objects that are no longer in use. The JVM automatically runs the garbage collector to reclaim memory.
+## Garbage collection
 
-```java
-Object obj = new Object();
-obj = null; // Marking object for garbage collection
-System.gc(); // Explicitly trigger garbage collection
-```
+Garbage collectors reclaim unreachable objects. Java 11 commonly uses G1 as the default collector in many distributions, but exact defaults can vary by runtime build and options.
 
-### Execution Engine
-The execution engine in the JVM interprets Java bytecode and executes it on the underlying hardware. It includes components such as the interpreter, just-in-time (JIT) compiler, and profiler.
+Good GC hygiene:
 
-```java
-public class Calculation {
-    public int add(int a, int b) {
-        return a + b;
-    }
-}
-```
+- Avoid unnecessary object retention.
+- Close resources that hold native handles.
+- Measure allocation rate before optimizing.
+- Use JVM logs and profilers instead of guessing.
 
-Understanding JVM internals is essential for optimizing Java applications and diagnosing performance issues.
+## Diagnostics
+
+Useful tools include:
+
+- `jps` to list Java processes.
+- `jcmd` to request diagnostic commands.
+- `jstack` for thread dumps.
+- `jmap` and heap dumps for memory analysis.
+- Java Flight Recorder for low-overhead runtime profiling.
+
+## Common symptoms
+
+| Symptom | Possible causes |
+| --- | --- |
+| High CPU | Busy loops, excessive GC, inefficient algorithms, lock contention. |
+| Growing heap | Memory leak, unbounded cache, retained collections. |
+| Deadlock | Inconsistent lock ordering or blocking while holding locks. |
+| Slow startup | Classpath scanning, reflection, dependency initialization. |
+
+## Exercises
+
+1. Compile a class and inspect bytecode with `javap -c`.
+2. Capture a thread dump from a running Java process.
+3. Explain the difference between stack, heap, and metaspace.

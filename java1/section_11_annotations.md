@@ -1,55 +1,63 @@
 # Annotations
 
 ## Overview
-Annotations in Java provide a powerful mechanism for adding metadata and information to Java code. They allow developers to embed additional information that can be used by the compiler or at runtime to perform specific tasks.
 
-## Core Concepts
-1. Annotation Syntax
-2. Built-in Annotations
-3. Custom Annotations
-4. Annotation Processors
+Annotations attach metadata to code. The compiler, tools, frameworks, and runtime reflection can inspect that metadata to enforce rules or generate behavior.
 
-## Detailed Explanations
+## Built-in annotations
 
-### Annotation Syntax
-Annotations in Java are defined using the @ symbol followed by the annotation type. They can include elements with default values and can be applied to various program elements like classes, methods, fields, and parameters.
+Common annotations include:
 
-```java
-@Deprecated
-public class DeprecatedClass {
-    // Class implementation
-}
-```
+- `@Override` verifies that a method overrides or implements a supertype method.
+- `@Deprecated` marks APIs that should no longer be used.
+- `@SuppressWarnings` suppresses specific compiler warnings in the narrowest possible scope.
+- `@FunctionalInterface` verifies a single abstract method contract.
 
-### Built-in Annotations
-Java provides a set of built-in annotations like @Override, @SuppressWarnings, @Deprecated, @FunctionalInterface, etc., which serve different purposes in the codebase.
-
-```java
-@Override
-public void someMethod() {
-    // Method implementation
-}
-```
-
-### Custom Annotations
-Developers can create custom annotations to define their own metadata and use them in their code. Custom annotations can have elements, defaults, and retention policies based on the requirements.
+## Defining annotations
 
 ```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CustomAnnotation {
-    String value() default "Custom Annotation";
+public @interface Audited {
+    String value() default "";
 }
 ```
 
-### Annotation Processors
-Annotation processors are tools that process annotations at compile time and generate additional code or perform validations based on the annotations present in the code.
+Important meta-annotations:
+
+- `@Retention` controls whether metadata is available in source, class files, or runtime.
+- `@Target` restricts where the annotation can appear.
+- `@Documented` includes the annotation in generated documentation.
+- `@Inherited` applies only to class annotations and superclass inheritance.
+
+## Annotation elements
+
+Element values may be primitives, `String`, `Class`, enums, annotations, or arrays of those types.
 
 ```java
-public class CustomAnnotationProcessor extends AbstractProcessor {
-    // Processor implementation
+public @interface Retryable {
+    int attempts() default 3;
+    Class<? extends Throwable>[] retryOn() default { RuntimeException.class };
 }
 ```
 
-Annotations play a crucial role in modern Java development by enabling developers to express additional information and behaviors directly in the codebase.
+## Runtime processing
 
+```java
+if (method.isAnnotationPresent(Audited.class)) {
+    Audited audited = method.getAnnotation(Audited.class);
+    System.out.println(audited.value());
+}
+```
+
+Runtime annotation processing often uses reflection and can affect startup time. Cache reflective lookups where appropriate.
+
+## Compile-time processing
+
+Annotation processors can generate code or validate rules during compilation. This is how many frameworks generate metadata, builders, or dependency-injection code.
+
+## Exercises
+
+1. Create an annotation for marking commands and inspect it at runtime.
+2. Compare `RetentionPolicy.CLASS` and `RetentionPolicy.RUNTIME`.
+3. Design an annotation that can be applied only to fields.
